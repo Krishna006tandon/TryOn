@@ -1,4 +1,7 @@
 import { LayoutGroup, motion } from 'framer-motion';
+import VisualSearch from './VisualSearch.jsx';
+import VoiceSearch from './VoiceSearch.jsx';
+import LanguageSwitcher from './LanguageSwitcher.jsx';
 import './Navbar.css';
 
 const navLinks = [
@@ -42,6 +45,11 @@ const Navbar = ({ onShopClick = () => {}, cartCount = 0, onCartClick = () => {} 
       <div className="nav-actions">
         <div className="search">
           <input placeholder="Search curated looks" />
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <VisualSearch />
+          <VoiceSearch />
+          <LanguageSwitcher />
         </div>
         <motion.button className="nav-cart" whileTap={{ scale: 0.9 }} onClick={onCartClick}>
           Cart

@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import Recommendations from '../components/Recommendations.jsx';
 import './ProductDetails.css';
 
 const ProductDetails = ({ products = [], onAddToCart = () => {}, onExploreMore = () => {} }) => {
@@ -75,6 +76,12 @@ const ProductDetails = ({ products = [], onAddToCart = () => {}, onExploreMore =
           </div>
         </div>
       </section>
+      {product.id && (
+        <Recommendations
+          productId={product.id}
+          onProductClick={(p) => navigate(`/product/${p.id || p._id}`)}
+        />
+      )}
     </main>
   );
 };

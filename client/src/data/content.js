@@ -64,3 +64,5 @@ export const fetchTrendingOutfits = () =>
     image: placeholder(['photo-1504593811423-6dd665756598', 'photo-1487412720507-e7ab37603c6f', 'photo-1521572163474-6864f9cf17ab', 'photo-1500534314209-a25ddb2bd429', 'photo-1434389677669-e08b4cac3105', 'photo-1475180098004-ca77a66827be', 'photo-1492562080023-ab3db95bfbce', 'photo-1503341455253-b2e723bb3dbb'][idx]),
   }));
 
+
+

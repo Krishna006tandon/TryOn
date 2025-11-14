@@ -5,9 +5,12 @@ import Footer from './components/Footer.jsx';
 import CartDrawer from './components/CartDrawer.jsx';
 import QuickViewModal from './components/QuickViewModal.jsx';
 import AuraBackground from './components/AuraBackground.jsx';
+import Chatbot from './components/Chatbot.jsx';
+import PersonalizedOffers from './components/PersonalizedOffers.jsx';
 import Home from './pages/Home.jsx';
 import ProductDetails from './pages/ProductDetails.jsx';
 import { fetchHeroSlides, fetchFeaturedProducts, fetchTrendingOutfits } from './data/content.js';
+import './i18n/config.js';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:4000';
 
@@ -19,6 +22,10 @@ function App() {
   const [cartItems, setCartItems] = useState([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [quickViewProduct, setQuickViewProduct] = useState(null);
+  const [userId] = useState(() => {
+    // In a real app, get from auth context/localStorage
+    return localStorage.getItem('userId') || 'demo-user-123';
+  });
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -172,6 +179,7 @@ function App() {
               onExploreCategory={categoryExplore}
               onProductClick={handleProductNavigate}
               onTrendingClick={handleProductNavigate}
+              userId={userId}
             />
           }
         />
@@ -187,6 +195,7 @@ function App() {
         />
       </Routes>
       <Footer />
+      <Chatbot userId={userId} />
       <CartDrawer
         isOpen={isCartOpen}
         items={cartItemsWithIds}

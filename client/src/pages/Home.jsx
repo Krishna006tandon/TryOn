@@ -4,6 +4,7 @@ import CategoryTiles from '../sections/CategoryTiles.jsx';
 import FeaturedProducts from '../sections/FeaturedProducts.jsx';
 import TrendingOutfits from '../sections/TrendingOutfits.jsx';
 import CTASection from '../sections/CTASection.jsx';
+import PersonalizedOffers from '../components/PersonalizedOffers.jsx';
 
 const Home = ({
   heroSlides = [],
@@ -16,6 +17,7 @@ const Home = ({
   onExploreCategory = () => {},
   onProductClick = () => {},
   onTrendingClick = () => {},
+  userId,
 }) => (
   <main>
     <HeroSlider
@@ -34,6 +36,12 @@ const Home = ({
       onProductClick={onProductClick}
     />
     <TrendingOutfits items={trendingOutfits} onTrendClick={onTrendingClick} />
+    {userId && (
+      <PersonalizedOffers
+        userId={userId}
+        onProductClick={onProductClick}
+      />
+    )}
     <CTASection
       onPrimaryAction={() => scrollToSection('#featured')}
       onSecondaryAction={() => scrollToSection('#contact')}
