@@ -16,10 +16,15 @@ const productSchema = new mongoose.Schema(
       type: String, // Hindi translation
     },
     category: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Category',
+      required: true,
+      index: true,
+    },
+    categoryName: {
       type: String,
       required: true,
       index: true,
-      enum: ['men', 'women', 'kids', 'accessories', 'shoes'],
     },
     subcategory: {
       type: String,

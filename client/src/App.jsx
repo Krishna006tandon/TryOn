@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
+import { AuthProvider } from './contexts/AuthContext.jsx';
 import Navbar from './components/Navbar.jsx';
 import Footer from './components/Footer.jsx';
 import CartDrawer from './components/CartDrawer.jsx';
@@ -9,6 +10,9 @@ import Chatbot from './components/Chatbot.jsx';
 import PersonalizedOffers from './components/PersonalizedOffers.jsx';
 import Home from './pages/Home.jsx';
 import ProductDetails from './pages/ProductDetails.jsx';
+import AdminLayout from './pages/admin/AdminLayout.jsx';
+import Login from './pages/admin/Login.jsx';
+import Dashboard from './pages/admin/Dashboard.jsx';
 import { fetchHeroSlides, fetchFeaturedProducts, fetchTrendingOutfits } from './data/content.js';
 import './i18n/config.js';
 
@@ -157,63 +161,88 @@ function App() {
   }, [navigate, scrollToSection]);
 
   return (
-    <>
-      <AuraBackground />
-      <Navbar
-        onShopClick={() => scrollToSection('#featured')}
-        cartCount={cartItems.length}
-        onCartClick={() => setIsCartOpen((prev) => !prev)}
-      />
+    <AuthProvider>
       <Routes>
+        {/* Admin Routes */}
+        <Route path="/admin/login" element={<Login />} />
+        <Route path="/admin" element={<AdminLayout />}>
+          <Route path="dashboard" element={<Dashboard />} />
+        </Route>
+
+        {/* Public Routes */}
         <Route
           path="/"
           element={
-            <Home
-              heroSlides={heroSlides}
-              featuredProducts={featuredProducts}
-              trendingOutfits={trendingOutfits}
-              isHydrated={isHydrated}
-              scrollToSection={scrollToSection}
-              onAddToCart={handleAddToCart}
-              onQuickView={handleQuickView}
-              onExploreCategory={categoryExplore}
-              onProductClick={handleProductNavigate}
-              onTrendingClick={handleProductNavigate}
-              userId={userId}
-            />
+            <>
+              <AuraBackground />
+              <Navbar
+                onShopClick={() => scrollToSection('#featured')}
+                cartCount={cartItems.length}
+                onCartClick={() => setIsCartOpen((prev) => !prev)}
+              />
+              <Home
+                heroSlides={heroSlides}
+                featuredProducts={featuredProducts}
+                trendingOutfits={trendingOutfits}
+                isHydrated={isHydrated}
+                scrollToSection={scrollToSection}
+                onAddToCart={handleAddToCart}
+                onQuickView={handleQuickView}
+                onExploreCategory={categoryExplore}
+                onProductClick={handleProductNavigate}
+                onTrendingClick={handleProductNavigate}
+                userId={userId}
+              />
+              <Footer />
+              <Chatbot userId={userId} />
+              <CartDrawer
+                isOpen={isCartOpen}
+                items={cartItemsWithIds}
+                total={cartTotal}
+                onClose={() => setIsCartOpen(false)}
+                onRemoveItem={handleRemoveFromCart}
+              />
+              <QuickViewModal
+                product={quickViewProduct}
+                onClose={() => setQuickViewProduct(null)}
+                onAddToCart={() => {
+                  if (quickViewProduct) {
+                    handleAddToCart(quickViewProduct);
+                    setQuickViewProduct(null);
+                  }
+                }}
+              />
+            </>
           }
         />
         <Route
           path="/product/:productId"
           element={
-            <ProductDetails
-              products={allProducts}
-              onAddToCart={handleAddToCart}
-              onExploreMore={goToFeatured}
-            />
+            <>
+              <AuraBackground />
+              <Navbar
+                onShopClick={() => scrollToSection('#featured')}
+                cartCount={cartItems.length}
+                onCartClick={() => setIsCartOpen((prev) => !prev)}
+              />
+              <ProductDetails
+                products={allProducts}
+                onAddToCart={handleAddToCart}
+                onExploreMore={goToFeatured}
+              />
+              <Footer />
+              <CartDrawer
+                isOpen={isCartOpen}
+                items={cartItemsWithIds}
+                total={cartTotal}
+                onClose={() => setIsCartOpen(false)}
+                onRemoveItem={handleRemoveFromCart}
+              />
+            </>
           }
         />
       </Routes>
-      <Footer />
-      <Chatbot userId={userId} />
-      <CartDrawer
-        isOpen={isCartOpen}
-        items={cartItemsWithIds}
-        total={cartTotal}
-        onClose={() => setIsCartOpen(false)}
-        onRemoveItem={handleRemoveFromCart}
-      />
-      <QuickViewModal
-        product={quickViewProduct}
-        onClose={() => setQuickViewProduct(null)}
-        onAddToCart={() => {
-          if (quickViewProduct) {
-            handleAddToCart(quickViewProduct);
-            setQuickViewProduct(null);
-          }
-        }}
-      />
-    </>
+    </AuthProvider>
   );
 }
 

@@ -36,6 +36,13 @@ const orderSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    couponCode: {
+      type: String,
+    },
+    couponId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Coupon',
+    },
     rewardPointsUsed: {
       type: Number,
       default: 0,
