@@ -1,0 +1,27 @@
+.utility-strip {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+  margin: 2.5rem auto 3.5rem;
+}
+
+.utility-card {
+  padding: 1rem 1.2rem;
+  border-radius: 18px;
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.04);
+  box-shadow: 0 20px 45px rgba(18, 18, 18, 0.07);
+  transition: transform 0.3s ease;
+}
+
+.utility-title {
+  font-weight: 600;
+  margin-bottom: 0.3rem;
+}
+
+.utility-subtitle {
+  color: #6f6f6f;
+  font-size: 0.9rem;
+  margin: 0;
+}
+

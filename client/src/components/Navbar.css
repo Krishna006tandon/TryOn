@@ -1,0 +1,103 @@
+.nav-shell {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.2rem 4vw;
+  background: rgba(247, 244, 242, 0.95);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.logo {
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.1rem;
+  letter-spacing: 0.4rem;
+  text-transform: uppercase;
+}
+
+nav {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.nav-link {
+  position: relative;
+  text-decoration: none;
+  color: #4b4b4b;
+  font-size: 0.95rem;
+  letter-spacing: 0.05em;
+  opacity: 0.7;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.nav-underline {
+  width: 0;
+  height: 2px;
+  margin-top: 0.2rem;
+  background: #121212;
+}
+
+.nav-link:hover .nav-underline {
+  width: 18px;
+  transition: width 0.25s ease;
+}
+
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.search {
+  background: #fff;
+  border-radius: 999px;
+  padding: 0.4rem 1rem;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  box-shadow: 0 10px 25px rgba(18, 18, 18, 0.08);
+}
+
+.search input {
+  border: none;
+  background: transparent;
+  width: 180px;
+  outline: none;
+}
+
+.nav-cart {
+  background: #121212;
+  color: #f7f4f2;
+  padding: 0.6rem 1.4rem;
+  border-radius: 999px;
+  font-weight: 500;
+  position: relative;
+}
+
+.cart-badge {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  background: #ffceb8;
+  color: #121212;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 0.75rem;
+}
+
+@media (max-width: 960px) {
+  nav {
+    display: none;
+  }
+
+  .search input {
+    width: 120px;
+  }
+}
+
