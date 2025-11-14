@@ -10,11 +10,17 @@ const cardVariants = {
   }),
 };
 
-const FeaturedProducts = ({ products = [] }) => (
-  <section className="featured-shell">
+const FeaturedProducts = ({
+  products = [],
+  onViewAll = () => {},
+  onAddToCart = () => {},
+  onQuickView = () => {},
+  onProductClick = () => {},
+}) => (
+  <section className="featured-shell" id="featured">
     <div className="section-head">
       <h2>Featured Capsules</h2>
-      <button>Shop full edit</button>
+      <button onClick={onViewAll}>Shop full edit</button>
     </div>
     <div className="featured-grid">
       {products.map((product, idx) => (
@@ -26,14 +32,30 @@ const FeaturedProducts = ({ products = [] }) => (
           custom={idx}
           className="product-card"
           key={product.id}
+          onClick={() => onProductClick(product)}
         >
           <div className="product-media">
             <img src={product.primary} alt={product.name} className="primary" />
             <img src={product.alternate} alt={`${product.name} alternate`} className="alternate" />
             <span className="product-tag pill">{product.tag}</span>
             <div className="product-actions">
-              <button>Quick View</button>
-              <button className="ghost">Add to Cart</button>
+              <button
+                onClick={(event) => {
+                  event.stopPropagation();
+                  onQuickView(product);
+                }}
+              >
+                Quick View
+              </button>
+              <button
+                className="ghost"
+                onClick={(event) => {
+                  event.stopPropagation();
+                  onAddToCart(product);
+                }}
+              >
+                Add to Cart
+              </button>
             </div>
           </div>
           <div className="product-meta">

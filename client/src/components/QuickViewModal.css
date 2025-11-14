@@ -1,0 +1,100 @@
+.quickview-overlay {
+  position: fixed;
+  inset: 0;
+  background: #000;
+  opacity: 0.6;
+  z-index: 250;
+  backdrop-filter: blur(3px);
+}
+
+.quickview-modal {
+  position: fixed;
+  inset: auto 50% 3rem;
+  transform: translateX(50%);
+  width: min(900px, 95vw);
+  background: var(--surface-2);
+  border: 1px solid var(--stroke);
+  border-radius: 32px;
+  padding: 1.5rem;
+  z-index: 260;
+  box-shadow: 0 40px 90px rgba(0, 0, 0, 0.6);
+}
+
+.quickview-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  border: none;
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.quickview-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.5rem;
+  align-items: center;
+}
+
+.quickview-grid img {
+  width: 100%;
+  border-radius: 24px;
+  object-fit: cover;
+}
+
+.quickview-details h3 {
+  margin: 0.4rem 0 0.6rem;
+  font-family: 'Poppins', sans-serif;
+}
+
+.quickview-label {
+  text-transform: uppercase;
+  letter-spacing: 0.6em;
+  font-size: 0.7rem;
+  color: var(--muted);
+}
+
+.quickview-price {
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin: 0.5rem 0;
+}
+
+.quickview-description {
+  color: var(--muted);
+  margin-bottom: 1.4rem;
+}
+
+.quickview-actions {
+  display: flex;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+}
+
+.quickview-actions button {
+  border-radius: 999px;
+  padding: 0.6rem 1.5rem;
+  background: var(--accent-gradient);
+  border: none;
+  color: #08080f;
+  font-weight: 600;
+}
+
+.quickview-actions .ghost {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  color: #fff;
+}
+
+@media (max-width: 640px) {
+  .quickview-modal {
+    inset: auto 0 0;
+    transform: none;
+    border-radius: 24px 24px 0 0;
+  }
+}
+

@@ -4,7 +4,12 @@ import './HeroSlider.css';
 
 const sliderInterval = 6000;
 
-const HeroSlider = ({ slides = [] }) => {
+const HeroSlider = ({
+  slides = [],
+  onPrimaryAction = () => {},
+  onSecondaryAction = () => {},
+  isHydrated = false,
+}) => {
   const [activeIndex, setActiveIndex] = useState(0);
 
   useEffect(() => {
@@ -15,23 +20,32 @@ const HeroSlider = ({ slides = [] }) => {
     return () => clearInterval(timer);
   }, [slides]);
 
-  const activeSlide = slides[activeIndex] || {};
+  const hasSlides = slides.length > 0;
+  const activeSlide =
+    slides[activeIndex] || {
+      id: 'placeholder',
+      title: 'Collection incoming',
+      subtitle: 'Connect to the API to view the latest looks.',
+      cta: 'Discover Looks',
+    };
 
   return (
-    <section className="hero-shell">
+    <section className={`hero-shell ${!hasSlides && !isHydrated ? 'loading' : ''}`} id="hero">
       <div className="hero-overlay" />
-      <AnimatePresence mode="wait">
-        <motion.img
-          key={activeSlide.id}
-          src={activeSlide.image}
-          alt={activeSlide.title}
-          className="hero-image"
-          initial={{ opacity: 0, scale: 1.05 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0, scale: 0.98 }}
-          transition={{ duration: 1.2, ease: 'easeInOut' }}
-        />
-      </AnimatePresence>
+      {hasSlides && (
+        <AnimatePresence mode="wait">
+          <motion.img
+            key={activeSlide.id}
+            src={activeSlide.image}
+            alt={activeSlide.title || 'Featured edit'}
+            className="hero-image"
+            initial={{ opacity: 0, scale: 1.05 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.98 }}
+            transition={{ duration: 1.2, ease: 'easeInOut' }}
+          />
+        </AnimatePresence>
+      )}
       <div className="hero-content">
         <motion.p
           className="eyebrow"
@@ -55,28 +69,35 @@ const HeroSlider = ({ slides = [] }) => {
         </AnimatePresence>
         <p>{activeSlide.subtitle}</p>
         <div className="hero-cta">
-          <motion.button whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.96 }}>
+          <motion.button
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.96 }}
+            onClick={onPrimaryAction}
+          >
             {activeSlide.cta || 'Shop Now'}
           </motion.button>
           <motion.button
             className="secondary"
             whileHover={{ scale: 1.03 }}
             whileTap={{ scale: 0.96 }}
+            onClick={onSecondaryAction}
           >
             Explore Collection
           </motion.button>
         </div>
-        <div className="hero-dots">
-          {slides.map((slide, idx) => (
-            <motion.button
-              key={slide.id}
-              className={`dot ${idx === activeIndex ? 'active' : ''}`}
-              onClick={() => setActiveIndex(idx)}
-              aria-label={`Go to ${slide.title}`}
-              whileHover={{ scale: 1.2 }}
-            />
-          ))}
-        </div>
+        {hasSlides && (
+          <div className="hero-dots">
+            {slides.map((slide, idx) => (
+              <motion.button
+                key={slide.id}
+                className={`dot ${idx === activeIndex ? 'active' : ''}`}
+                onClick={() => setActiveIndex(idx)}
+                aria-label={`Go to ${slide.title}`}
+                whileHover={{ scale: 1.2 }}
+              />
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );

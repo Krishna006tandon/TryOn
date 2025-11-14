@@ -1,37 +1,209 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import Navbar from './components/Navbar.jsx';
-import HeroSlider from './sections/HeroSlider.jsx';
-import UtilityStrip from './components/UtilityStrip.jsx';
-import CategoryTiles from './sections/CategoryTiles.jsx';
-import FeaturedProducts from './sections/FeaturedProducts.jsx';
-import TrendingOutfits from './sections/TrendingOutfits.jsx';
-import CTASection from './sections/CTASection.jsx';
 import Footer from './components/Footer.jsx';
+import CartDrawer from './components/CartDrawer.jsx';
+import QuickViewModal from './components/QuickViewModal.jsx';
+import AuraBackground from './components/AuraBackground.jsx';
+import Home from './pages/Home.jsx';
+import ProductDetails from './pages/ProductDetails.jsx';
 import { fetchHeroSlides, fetchFeaturedProducts, fetchTrendingOutfits } from './data/content.js';
+
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:4000';
 
 function App() {
   const [heroSlides, setHeroSlides] = useState([]);
   const [featuredProducts, setFeaturedProducts] = useState([]);
   const [trendingOutfits, setTrendingOutfits] = useState([]);
+  const [isHydrated, setIsHydrated] = useState(false);
+  const [cartItems, setCartItems] = useState([]);
+  const [isCartOpen, setIsCartOpen] = useState(false);
+  const [quickViewProduct, setQuickViewProduct] = useState(null);
+  const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
-    setHeroSlides(fetchHeroSlides());
-    setFeaturedProducts(fetchFeaturedProducts());
-    setTrendingOutfits(fetchTrendingOutfits());
+    let active = true;
+
+    const loadContent = async () => {
+      try {
+        const endpoints = ['hero', 'featured', 'trending'];
+        const [hero, featured, trending] = await Promise.all(
+          endpoints.map(async (endpoint) => {
+            const response = await fetch(`${API_BASE_URL}/api/${endpoint}`);
+            if (!response.ok) {
+              throw new Error(`Failed to load ${endpoint}`);
+            }
+            return response.json();
+          }),
+        );
+
+        if (active) {
+          setHeroSlides(hero);
+          setFeaturedProducts(featured);
+          setTrendingOutfits(trending);
+        }
+      } catch (error) {
+        console.warn('Falling back to local seed content', error);
+        if (active) {
+          setHeroSlides(fetchHeroSlides());
+          setFeaturedProducts(fetchFeaturedProducts());
+          setTrendingOutfits(fetchTrendingOutfits());
+        }
+      } finally {
+        if (active) {
+          setIsHydrated(true);
+        }
+      }
+    };
+
+    loadContent();
+
+    return () => {
+      active = false;
+    };
   }, []);
+
+  const scrollToSection = useCallback((selector) => {
+    if (typeof document === 'undefined') return;
+    const target = document.querySelector(selector);
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }, []);
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'auto' });
+  }, [location.pathname]);
+
+  const handleAddToCart = useCallback((product) => {
+    setCartItems((prev) => [...prev, product]);
+    setIsCartOpen(true);
+  }, []);
+
+  const handleQuickView = useCallback((product) => {
+    setQuickViewProduct(product);
+  }, []);
+
+  const handleRemoveFromCart = useCallback((id) => {
+    setCartItems((prev) => prev.filter((item, idx) => `${item.id}-${idx}` !== id));
+  }, []);
+
+  const cartItemsWithIds = useMemo(
+    () => cartItems.map((item, idx) => ({ ...item, _instanceId: `${item.id}-${idx}` })),
+    [cartItems],
+  );
+
+  const cartTotal = useMemo(() => {
+    return cartItems.reduce((sum, item) => {
+      const numeric = Number(item.price?.replace(/[^0-9.]/g, '') || 0);
+      return sum + (Number.isFinite(numeric) ? numeric : 0);
+    }, 0);
+  }, [cartItems]);
+
+  const allProducts = useMemo(() => {
+    const normalizedFeatured = featuredProducts.map((product) => ({
+      ...product,
+      name: product.name,
+      title: product.name,
+      description:
+        product.description ||
+        'Precision-cut tailoring with performance stretch and seasonless texture.',
+    }));
+
+    const normalizedTrending = trendingOutfits.map((item, idx) => ({
+      ...item,
+      name: item.title,
+      id: item.id,
+      price: item.price || `$${230 + idx * 10}`,
+      primary: item.image,
+      alternate: item.image,
+      description: 'Curated look from the latest edit, styled with layered essentials.',
+    }));
+
+    return [...normalizedFeatured, ...normalizedTrending];
+  }, [featuredProducts, trendingOutfits]);
+
+  const categoryExplore = useCallback(
+    (categoryId) => {
+      if (categoryId === 'kids') {
+        scrollToSection('#trending');
+        return;
+      }
+      scrollToSection('#featured');
+    },
+    [scrollToSection],
+  );
+
+  const handleProductNavigate = useCallback(
+    (product) => {
+      navigate(`/product/${product.id}`);
+    },
+    [navigate],
+  );
+
+  const goToFeatured = useCallback(() => {
+    navigate('/');
+    setTimeout(() => {
+      scrollToSection('#featured');
+    }, 150);
+  }, [navigate, scrollToSection]);
 
   return (
     <>
-      <Navbar />
-      <main>
-        <HeroSlider slides={heroSlides} />
-        <UtilityStrip />
-        <CategoryTiles />
-        <FeaturedProducts products={featuredProducts} />
-        <TrendingOutfits items={trendingOutfits} />
-        <CTASection />
-      </main>
+      <AuraBackground />
+      <Navbar
+        onShopClick={() => scrollToSection('#featured')}
+        cartCount={cartItems.length}
+        onCartClick={() => setIsCartOpen((prev) => !prev)}
+      />
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <Home
+              heroSlides={heroSlides}
+              featuredProducts={featuredProducts}
+              trendingOutfits={trendingOutfits}
+              isHydrated={isHydrated}
+              scrollToSection={scrollToSection}
+              onAddToCart={handleAddToCart}
+              onQuickView={handleQuickView}
+              onExploreCategory={categoryExplore}
+              onProductClick={handleProductNavigate}
+              onTrendingClick={handleProductNavigate}
+            />
+          }
+        />
+        <Route
+          path="/product/:productId"
+          element={
+            <ProductDetails
+              products={allProducts}
+              onAddToCart={handleAddToCart}
+              onExploreMore={goToFeatured}
+            />
+          }
+        />
+      </Routes>
       <Footer />
+      <CartDrawer
+        isOpen={isCartOpen}
+        items={cartItemsWithIds}
+        total={cartTotal}
+        onClose={() => setIsCartOpen(false)}
+        onRemoveItem={handleRemoveFromCart}
+      />
+      <QuickViewModal
+        product={quickViewProduct}
+        onClose={() => setQuickViewProduct(null)}
+        onAddToCart={() => {
+          if (quickViewProduct) {
+            handleAddToCart(quickViewProduct);
+            setQuickViewProduct(null);
+          }
+        }}
+      />
     </>
   );
 }

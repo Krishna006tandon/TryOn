@@ -4,7 +4,7 @@ import './Footer.css';
 const social = ['Instagram', 'Pinterest', 'TikTok', 'YouTube'];
 
 const Footer = () => (
-  <footer className="footer-shell">
+  <footer className="footer-shell" id="contact">
     <div className="footer-left">
       <h3>Stay in the know</h3>
       <p>Weekly drops, styling notes, and private previews.</p>

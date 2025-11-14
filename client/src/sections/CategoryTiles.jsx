@@ -9,8 +9,8 @@ const hoverMotion = {
   whileTap: { scale: 0.98 },
 };
 
-const CategoryTiles = () => (
-  <section className="category-shell">
+const CategoryTiles = ({ onExploreCategory = () => {} }) => (
+  <section className="category-shell" id="categories">
     {tiles.map((tile) => (
       <motion.div
         key={tile.id}
@@ -22,7 +22,12 @@ const CategoryTiles = () => (
         <div className="category-overlay" />
         <div className="category-content">
           <p>{tile.label}</p>
-          <motion.button whileHover={{ scale: 1.05 }}>Explore</motion.button>
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            onClick={() => onExploreCategory(tile.id)}
+          >
+            Explore
+          </motion.button>
         </div>
       </motion.div>
     ))}

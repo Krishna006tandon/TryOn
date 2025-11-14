@@ -6,12 +6,25 @@
 }
 
 .utility-card {
-  padding: 1rem 1.2rem;
+  padding: 1.1rem 1.3rem;
   border-radius: 18px;
-  background: #ffffff;
-  border: 1px solid rgba(0, 0, 0, 0.04);
-  box-shadow: 0 20px 45px rgba(18, 18, 18, 0.07);
-  transition: transform 0.3s ease;
+  background: var(--surface-2);
+  border: 1px solid var(--stroke);
+  box-shadow: 0 20px 45px rgba(3, 3, 6, 0.7);
+  transition: transform 0.3s ease, border-color 0.3s ease;
+  animation: floatCard 6s ease-in-out infinite;
+}
+
+.utility-card:nth-child(2) {
+  animation-delay: 0.8s;
+}
+
+.utility-card:nth-child(3) {
+  animation-delay: 1.2s;
+}
+
+.utility-card:hover {
+  border-color: rgba(255, 255, 255, 0.2);
 }
 
 .utility-title {
@@ -20,8 +33,18 @@
 }
 
 .utility-subtitle {
-  color: #6f6f6f;
+  color: var(--muted);
   font-size: 0.9rem;
   margin: 0;
+}
+
+@keyframes floatCard {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
 }
 

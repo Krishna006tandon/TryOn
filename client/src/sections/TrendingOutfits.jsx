@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react';
 import { LayoutGroup, motion } from 'framer-motion';
 import './TrendingOutfits.css';
 
-const TrendingOutfits = ({ items = [] }) => {
+const TrendingOutfits = ({ items = [], onTrendClick = () => {} }) => {
   const tags = useMemo(() => ['All', ...new Set(items.map((item) => item.tag))], [items]);
   const [activeTag, setActiveTag] = useState('All');
 
@@ -12,7 +12,7 @@ const TrendingOutfits = ({ items = [] }) => {
   );
 
   return (
-    <section className="trending-shell">
+    <section className="trending-shell" id="trending">
       <div className="section-head">
         <h2>Trending Outfits</h2>
         <p>Curated looks updated hourly.</p>
@@ -43,6 +43,7 @@ const TrendingOutfits = ({ items = [] }) => {
             whileInView={{ opacity: 1, y: 0, scale: 1 }}
             viewport={{ once: true }}
             transition={{ delay: idx * 0.05, duration: 0.6 }}
+            onClick={() => onTrendClick(item)}
           >
             <img src={item.image} alt={item.title} />
             <div className="trend-info">
