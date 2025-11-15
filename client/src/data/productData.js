@@ -13,13 +13,12 @@ const generateProducts = (baseName, count, basePrice = 2000, category = '') => {
     
     products.push({
       id: `${baseName.toLowerCase()}-${i}`,
-      name: `${baseName} ${i}`,
+      name: baseName, // Just use the category name, no number
       brand: getBrandForProduct(baseName),
       image: `/src/images/${imageName}`,
       price: `₹${price.toLocaleString('en-IN')}`,
       originalPrice: `₹${originalPrice.toLocaleString('en-IN')}`,
       discount: discount,
-      color: getColorForProduct(i),
       assured: true,
     });
   }
@@ -39,13 +38,11 @@ const getBrandForProduct = (productName) => {
     'Dress': 'ZARA',
     'Top': 'H&M',
     'Lehenga': 'MANISH MALHOTRA',
+    'Sweatshirt': 'ADIDAS',
+    'Jeans': 'LEVI\'S',
+    'Denim': 'WRANGLER',
   };
   return brands[productName] || 'BRAND';
-};
-
-const getColorForProduct = (index) => {
-  const colors = ['Blue', 'Light Blue', 'Green', 'Black', 'Navy', 'Grey', 'White', 'Maroon', 'Red', 'Pink'];
-  return colors[(index - 1) % colors.length];
 };
 
 // Search term to product mapping
@@ -68,6 +65,8 @@ export const getProductsBySearchTerm = (searchTerm) => {
     'anarkali': 'anarkali',
     'hoodie': 'hoodie',
     'top': 'top',
+    'sweatshirt': 'sweatshirt',
+    'denim': 'denim',
   };
 
   const productType = searchMap[term];
@@ -87,11 +86,19 @@ export const getProductsBySearchTerm = (searchTerm) => {
     hoodie: 5,
     top: 5,
     jeans: 6,
+    sweatshirt: 9,
+    denim: 8,
   };
 
   const count = imageCounts[productType] || 5;
-  const baseName = productType === 'tshirt' ? 'T Shirt' : 
-                   productType.charAt(0).toUpperCase() + productType.slice(1);
+  let baseName;
+  if (productType === 'tshirt') {
+    baseName = 'T Shirt';
+  } else if (productType === 'sweatshirt') {
+    baseName = 'Sweatshirt';
+  } else {
+    baseName = productType.charAt(0).toUpperCase() + productType.slice(1);
+  }
 
   return generateProducts(baseName, count, 2000);
 };

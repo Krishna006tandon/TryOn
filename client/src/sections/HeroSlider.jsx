@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import './HeroSlider.css';
 
@@ -10,7 +11,27 @@ const HeroSlider = ({
   onSecondaryAction = () => {},
   isHydrated = false,
 }) => {
+  const navigate = useNavigate();
   const [activeIndex, setActiveIndex] = useState(0);
+
+  // Map slide index to search term
+  const getSearchTermForSlide = (index) => {
+    const searchMap = {
+      0: 'Hoodie',    // First banner -> Hoodies
+      1: 'Sweatshirt', // Second banner -> Sweatshirts
+      2: 'Top',       // Third banner -> Tops
+      3: 'Jeans',     // Fourth banner -> Jeans
+      4: 'Denim',     // Fifth banner -> Denim
+    };
+    return searchMap[index];
+  };
+
+  const handleSlideClick = () => {
+    const searchTerm = getSearchTermForSlide(activeIndex);
+    if (searchTerm) {
+      navigate(`/search/${encodeURIComponent(searchTerm)}`);
+    }
+  };
 
   useEffect(() => {
     if (!slides.length) return undefined;
@@ -42,6 +63,8 @@ const HeroSlider = ({
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.98 }}
             transition={{ duration: 1.2, ease: 'easeInOut' }}
+            onClick={handleSlideClick}
+            style={{ cursor: 'pointer' }}
           />
         </AnimatePresence>
       )}

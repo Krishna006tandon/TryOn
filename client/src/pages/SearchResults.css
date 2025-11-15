@@ -150,6 +150,33 @@
   fill: #ff7d9d;
 }
 
+.cart-btn {
+  position: absolute;
+  top: 3.5rem;
+  right: 0.75rem;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  z-index: 10;
+}
+
+.cart-btn:hover {
+  background: #fff;
+  transform: scale(1.1);
+}
+
+.cart-btn svg {
+  color: #666;
+  transition: color 0.2s ease;
+}
+
 .discount-badge {
   position: absolute;
   top: 0.75rem;
@@ -182,11 +209,6 @@
   white-space: nowrap;
 }
 
-.product-color {
-  font-size: 0.85rem;
-  color: var(--muted, rgba(255, 255, 255, 0.6));
-  margin: 0 0 0.75rem 0;
-}
 
 .product-pricing {
   display: flex;
@@ -228,44 +250,6 @@
   height: 16px;
 }
 
-.product-actions {
-  display: flex;
-  gap: 0.5rem;
-  margin-top: 0.75rem;
-}
-
-.add-to-cart-btn,
-.view-details-btn {
-  flex: 1;
-  padding: 0.75rem;
-  border-radius: 8px;
-  border: none;
-  font-size: 0.9rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.add-to-cart-btn {
-  background: var(--accent-gradient, linear-gradient(135deg, #ff7d9d, #ffa500));
-  color: #050507;
-}
-
-.add-to-cart-btn:hover {
-  transform: scale(1.02);
-  box-shadow: 0 4px 12px rgba(255, 125, 157, 0.4);
-}
-
-.view-details-btn {
-  background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  color: #fff;
-}
-
-.view-details-btn:hover {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.5);
-}
 
 .no-results {
   text-align: center;
