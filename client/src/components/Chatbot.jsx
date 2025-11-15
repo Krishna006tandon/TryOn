@@ -45,6 +45,9 @@ const Chatbot = ({ userId }) => {
       ]);
     } catch (error) {
       console.error('Chatbot error:', error);
+      if (error.response && error.response.data) {
+        console.error('Server error details:', error.response.data);
+      }
       setMessages((prev) => [
         ...prev,
         { role: 'assistant', content: 'Sorry, I encountered an error. Please try again.' },

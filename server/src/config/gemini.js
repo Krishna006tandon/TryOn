@@ -8,22 +8,22 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 // Model configurations for different tasks
 export const geminiModels = {
   // Vision tasks (visual search, image analysis)
-  vision: genAI.getGenerativeModel({ model: 'gemini-1.5-pro' }),
+  vision: genAI.getGenerativeModel({ model: 'gemini-2.5-flash' }),
   
   // Embedding similarity (outfit recommendations) - using embedding model
   embedding: genAI.getGenerativeModel({ model: 'text-embedding-004' }),
   
   // Chatbot (customer support)
-  chat: genAI.getGenerativeModel({ model: 'gemini-1.5-pro' }),
+  chat: genAI.getGenerativeModel({ model: 'gemini-2.5-flash' }),
   
   // Translations (EN ↔ HI)
-  translation: genAI.getGenerativeModel({ model: 'gemini-1.5-pro' }),
+  translation: genAI.getGenerativeModel({ model: 'gemini-2.5-flash' }),
   
   // Fast inference (quick responses)
   fast: genAI.getGenerativeModel({ model: 'gemini-1.5-flash' }),
   
   // Heavy reasoning (complex queries)
-  reasoning: genAI.getGenerativeModel({ model: 'gemini-1.5-pro' }),
+  reasoning: genAI.getGenerativeModel({ model: 'gemini-2.5-flash' }),
 };
 
 // Helper function to generate embeddings using REST API
