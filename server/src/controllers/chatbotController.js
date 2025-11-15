@@ -91,7 +91,7 @@ export const chatWithBot = async (req, res) => {
     }
 
     // Build system prompt with context
-    let systemPrompt = `You are a helpful customer support assistant for an online clothing store called "TryOn Collective". 
+    let systemPromptContent = `You are a helpful customer support assistant for an online clothing store called "TryOn Collective". 
 You can help customers with:
 1. Order status and tracking
 2. Product information and availability
@@ -104,7 +104,7 @@ Be friendly, concise, and helpful. If you need specific information, ask the use
     if (userId) {
       const userContext = await buildUserContext(userId);
       if (userContext) {
-        systemPrompt += `\n\nUser Information:
+        systemPromptContent += `\n\nUser Information:
 - Name: ${userContext.userName}
 - Email: ${userContext.email}
 - Recent Orders: ${JSON.stringify(userContext.recentOrders, null, 2)}`;
@@ -117,7 +117,7 @@ Be friendly, concise, and helpful. If you need specific information, ask the use
       const orderNumber = orderNumberMatch[1];
       const orderDetails = await getOrderDetails(orderNumber);
       if (orderDetails) {
-        systemPrompt += `\n\nOrder Details: ${JSON.stringify(orderDetails, null, 2)}`;
+        systemPromptContent += `\n\nOrder Details: ${JSON.stringify(orderDetails, null, 2)}`;
       }
     }
 
@@ -125,21 +125,58 @@ Be friendly, concise, and helpful. If you need specific information, ask the use
     if (message.toLowerCase().includes('product') || message.toLowerCase().includes('item')) {
       const products = await getProductInfo(message);
       if (products.length > 0) {
-        systemPrompt += `\n\nAvailable Products: ${JSON.stringify(products, null, 2)}`;
+        systemPromptContent += `\n\nAvailable Products: ${JSON.stringify(products, null, 2)}`;
       }
     }
 
-    // Build conversation history
-    const conversationContext = conversationHistory
-      .slice(-5) // Last 5 messages
-      .map((msg) => `${msg.role}: ${msg.content}`)
-      .join('\n');
+    // Prepare conversation history for Gemini API
+    // Filter out any initial 'model' messages if the history doesn't start with 'user'
+    // and ensure roles are 'user'/'model'
+    const formattedHistory = [];
+    let foundFirstUserMessage = false;
+    for (const msg of conversationHistory) {
+      const role = msg.role === 'user' ? 'user' : 'model';
 
-    const fullPrompt = `${systemPrompt}\n\nConversation History:\n${conversationContext}\n\nUser: ${message}\nAssistant:`;
+      if (!foundFirstUserMessage) {
+        if (role === 'user') {
+          formattedHistory.push({
+            role: 'user',
+            parts: [{ text: msg.content }],
+          });
+          foundFirstUserMessage = true;
+        }
+        // If the first message encountered is 'model', skip it until a 'user' message is found.
+        // This handles cases where the client might send a history that starts with a model message.
+      } else {
+        formattedHistory.push({
+          role: role,
+          parts: [{ text: msg.content }],
+        });
+      }
+    }
+
+    let messageForGemini = message;
+    let historyForGemini = formattedHistory;
+
+    if (formattedHistory.length === 0) {
+      // This is the very first turn of the conversation.
+      // The system prompt should be prepended to the current user message.
+      messageForGemini = systemPromptContent + '\n\n' + message;
+      historyForGemini = []; // No history yet for startChat
+    } else {
+      // Conversation has already started.
+      // The system prompt should have been part of the first user message in the history.
+      // We need to ensure it is.
+      if (historyForGemini[0].role === 'user' && !historyForGemini[0].parts[0].text.includes(systemPromptContent)) {
+        historyForGemini[0].parts[0].text = systemPromptContent + '\n\n' + historyForGemini[0].parts[0].text;
+      }
+      // The current message is just the user's input.
+    }
 
     // Generate response using Gemini
     const model = geminiModels.chat;
-    const result = await model.generateContent(fullPrompt);
+    const chat = model.startChat({ history: historyForGemini });
+    const result = await chat.sendMessage(messageForGemini);
     const response = await result.response;
     const botResponse = response.text();
 
@@ -148,8 +185,11 @@ Be friendly, concise, and helpful. If you need specific information, ask the use
       timestamp: new Date().toISOString(),
     });
   } catch (error) {
-    console.error('Error in chatbot:', error);
-    res.status(500).json({ error: 'Failed to process chat message' });
+    console.error('Error in chatbot:', error.message, error.stack);
+    res.status(500).json({
+      error: 'Failed to process chat message',
+      details: process.env.NODE_ENV === 'development' ? error.message : undefined,
+    });
   }
 };
 
