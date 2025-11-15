@@ -5,12 +5,11 @@ import { useAuth } from '../contexts/AuthContext'; // Import useAuth
 import VisualSearch from './VisualSearch.jsx';
 import VoiceSearch from './VoiceSearch.jsx';
 import LanguageSwitcher from './LanguageSwitcher.jsx';
+import TryOnLogo from '../images/TryOn.png';
 import './Navbar.css';
 
 const navLinks = [
-  { label: 'Hero', href: '#hero' },
   { label: 'Categories', href: '#categories' },
-  { label: 'Featured', href: '#featured' },
   { label: 'Trending', href: '#trending' },
   { label: 'Capsule', href: '#capsule' },
 ];
@@ -36,6 +35,7 @@ const Navbar = ({ onShopClick = () => {}, cartCount = 0, onCartClick = () => {} 
   const [showSuggestions, setShowSuggestions] = useState(false);
   const searchRef = useRef(null);
   const suggestionsRef = useRef(null);
+  const searchActionsRef = useRef(null);
 
   const handleNavClick = (event, href) => {
     event.preventDefault();
@@ -52,7 +52,9 @@ const Navbar = ({ onShopClick = () => {}, cartCount = 0, onCartClick = () => {} 
         searchRef.current &&
         !searchRef.current.contains(event.target) &&
         suggestionsRef.current &&
-        !suggestionsRef.current.contains(event.target)
+        !suggestionsRef.current.contains(event.target) &&
+        searchActionsRef.current &&
+        !searchActionsRef.current.contains(event.target)
       ) {
         setShowSuggestions(false);
       }
@@ -80,6 +82,7 @@ const Navbar = ({ onShopClick = () => {}, cartCount = 0, onCartClick = () => {} 
   return (
     <header className="nav-shell">
       <button className="logo" onClick={onShopClick}>
+        <img src={TryOnLogo} alt="TryOn Logo" className="logo-image" />
         tryon collective
       </button>
       <LayoutGroup>
@@ -107,35 +110,48 @@ const Navbar = ({ onShopClick = () => {}, cartCount = 0, onCartClick = () => {} 
             onFocus={handleSearchFocus}
           />
           <AnimatePresence>
-            {showSuggestions && filteredSuggestions.length > 0 && (
-              <motion.div
-                ref={suggestionsRef}
-                className="search-suggestions"
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.2 }}
-              >
-                {filteredSuggestions.map((suggestion, index) => (
+            {showSuggestions && (
+              <>
+                {filteredSuggestions.length > 0 && (
                   <motion.div
-                    key={suggestion}
-                    className="search-suggestion-item"
-                    onClick={() => handleSuggestionClick(suggestion)}
-                    whileHover={{ backgroundColor: 'rgba(255, 255, 255, 0.1)' }}
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: index * 0.05 }}
+                    ref={suggestionsRef}
+                    className="search-suggestions"
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.2 }}
                   >
-                    {suggestion}
+                    {filteredSuggestions.map((suggestion, index) => (
+                      <motion.div
+                        key={suggestion}
+                        className="search-suggestion-item"
+                        onClick={() => handleSuggestionClick(suggestion)}
+                        whileHover={{ backgroundColor: 'rgba(255, 255, 255, 0.1)' }}
+                        initial={{ opacity: 0, x: -10 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: index * 0.05 }}
+                      >
+                        {suggestion}
+                      </motion.div>
+                    ))}
                   </motion.div>
-                ))}
-              </motion.div>
+                )}
+                <motion.div
+                  ref={searchActionsRef}
+                  className="search-actions"
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <VisualSearch />
+                  <VoiceSearch />
+                </motion.div>
+              </>
             )}
           </AnimatePresence>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <VisualSearch />
-          <VoiceSearch />
           <LanguageSwitcher />
           {user ? ( // Conditionally render Profile link and Logout button
             <>
