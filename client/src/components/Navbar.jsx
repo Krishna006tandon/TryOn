@@ -1,4 +1,5 @@
-import { LayoutGroup, motion } from 'framer-motion';
+import { useState, useRef, useEffect } from 'react';
+import { LayoutGroup, motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom'; // Import Link
 import { useAuth } from '../contexts/AuthContext'; // Import useAuth
 import VisualSearch from './VisualSearch.jsx';
@@ -14,8 +15,28 @@ const navLinks = [
   { label: 'Capsule', href: '#capsule' },
 ];
 
+const searchSuggestions = [
+  'T Shirt',
+  'Kurta',
+  'Lehenga',
+  'Tuxedo',
+  'Saree',
+  'Jeans',
+  'Dress',
+  'Shirt',
+  'Blazer',
+  'Gown',
+  'Sherwani',
+  'Anarkali',
+];
+
 const Navbar = ({ onShopClick = () => {}, cartCount = 0, onCartClick = () => {} }) => {
   const { user, logout } = useAuth(); // Use useAuth hook
+  const [searchValue, setSearchValue] = useState('');
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const searchRef = useRef(null);
+  const suggestionsRef = useRef(null);
+
   const handleNavClick = (event, href) => {
     event.preventDefault();
     const target = document.querySelector(href);
@@ -23,6 +44,38 @@ const Navbar = ({ onShopClick = () => {}, cartCount = 0, onCartClick = () => {} 
       target.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   };
+
+  // Close suggestions when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        searchRef.current &&
+        !searchRef.current.contains(event.target) &&
+        suggestionsRef.current &&
+        !suggestionsRef.current.contains(event.target)
+      ) {
+        setShowSuggestions(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  const handleSearchFocus = () => {
+    setShowSuggestions(true);
+  };
+
+  const handleSuggestionClick = (suggestion) => {
+    setSearchValue(suggestion);
+    setShowSuggestions(false);
+  };
+
+  const filteredSuggestions = searchSuggestions.filter((suggestion) =>
+    suggestion.toLowerCase().includes(searchValue.toLowerCase())
+  );
 
   return (
     <header className="nav-shell">
@@ -46,8 +99,39 @@ const Navbar = ({ onShopClick = () => {}, cartCount = 0, onCartClick = () => {} 
         </nav>
       </LayoutGroup>
       <div className="nav-actions">
-        <div className="search">
-          <input placeholder="Search curated looks" />
+        <div className="search" ref={searchRef}>
+          <input
+            placeholder="Search curated looks"
+            value={searchValue}
+            onChange={(e) => setSearchValue(e.target.value)}
+            onFocus={handleSearchFocus}
+          />
+          <AnimatePresence>
+            {showSuggestions && filteredSuggestions.length > 0 && (
+              <motion.div
+                ref={suggestionsRef}
+                className="search-suggestions"
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.2 }}
+              >
+                {filteredSuggestions.map((suggestion, index) => (
+                  <motion.div
+                    key={suggestion}
+                    className="search-suggestion-item"
+                    onClick={() => handleSuggestionClick(suggestion)}
+                    whileHover={{ backgroundColor: 'rgba(255, 255, 255, 0.1)' }}
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: index * 0.05 }}
+                  >
+                    {suggestion}
+                  </motion.div>
+                ))}
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <VisualSearch />
