@@ -1,17 +1,16 @@
 import { useState, useRef, useEffect } from 'react';
 import { LayoutGroup, motion, AnimatePresence } from 'framer-motion';
-import { Link } from 'react-router-dom'; // Import Link
+import { Link, useNavigate } from 'react-router-dom'; // Import Link and useNavigate
 import { useAuth } from '../contexts/AuthContext'; // Import useAuth
 import VisualSearch from './VisualSearch.jsx';
 import VoiceSearch from './VoiceSearch.jsx';
 import LanguageSwitcher from './LanguageSwitcher.jsx';
-import TryOnLogo from '../images/TryOn.png';
+import TryOnLogo from '../images/TryOn_Dark.png';
 import './Navbar.css';
 
 const navLinks = [
   { label: 'Categories', href: '#categories' },
   { label: 'Trending', href: '#trending' },
-  { label: 'Capsule', href: '#capsule' },
 ];
 
 const searchSuggestions = [
@@ -23,14 +22,13 @@ const searchSuggestions = [
   'Jeans',
   'Dress',
   'Shirt',
-  'Blazer',
-  'Gown',
   'Sherwani',
   'Anarkali',
 ];
 
 const Navbar = ({ onShopClick = () => {}, cartCount = 0, onCartClick = () => {} }) => {
   const { user, logout } = useAuth(); // Use useAuth hook
+  const navigate = useNavigate();
   const [searchValue, setSearchValue] = useState('');
   const [showSuggestions, setShowSuggestions] = useState(false);
   const searchRef = useRef(null);
@@ -73,6 +71,16 @@ const Navbar = ({ onShopClick = () => {}, cartCount = 0, onCartClick = () => {} 
   const handleSuggestionClick = (suggestion) => {
     setSearchValue(suggestion);
     setShowSuggestions(false);
+    // Navigate to search results page
+    navigate(`/search/${encodeURIComponent(suggestion)}`);
+  };
+
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    if (searchValue.trim()) {
+      navigate(`/search/${encodeURIComponent(searchValue.trim())}`);
+      setShowSuggestions(false);
+    }
   };
 
   const filteredSuggestions = searchSuggestions.filter((suggestion) =>
@@ -102,7 +110,7 @@ const Navbar = ({ onShopClick = () => {}, cartCount = 0, onCartClick = () => {} 
         </nav>
       </LayoutGroup>
       <div className="nav-actions">
-        <div className="search" ref={searchRef}>
+        <form className="search" ref={searchRef} onSubmit={handleSearchSubmit}>
           <input
             placeholder="Search curated looks"
             value={searchValue}
@@ -150,7 +158,7 @@ const Navbar = ({ onShopClick = () => {}, cartCount = 0, onCartClick = () => {} 
               </>
             )}
           </AnimatePresence>
-        </div>
+        </form>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <LanguageSwitcher />
           {user ? ( // Conditionally render Profile link and Logout button

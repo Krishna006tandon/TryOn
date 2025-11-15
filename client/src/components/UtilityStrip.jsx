@@ -2,9 +2,9 @@ import { motion } from 'framer-motion';
 import './UtilityStrip.css';
 
 const badges = [
-  { title: '48H Delivery', subtitle: 'On curated capsules' },
-  { title: 'Express Returns', subtitle: 'Extended 30-day window' },
-  { title: 'Concierge', subtitle: 'Styling 24/7 support' },
+  { title: 'Wedding Guest', subtitle: '' },
+  { title: 'Party Wear', subtitle: '' },
+  { title: 'Wear to Work!', subtitle: '' },
 ];
 
 const UtilityStrip = () => (

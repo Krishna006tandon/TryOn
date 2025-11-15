@@ -3,7 +3,6 @@ import UtilityStrip from '../components/UtilityStrip.jsx';
 import CategoryTiles from '../sections/CategoryTiles.jsx';
 import FeaturedProducts from '../sections/FeaturedProducts.jsx';
 import TrendingOutfits from '../sections/TrendingOutfits.jsx';
-import CTASection from '../sections/CTASection.jsx';
 import PersonalizedOffers from '../components/PersonalizedOffers.jsx';
 
 const Home = ({
@@ -42,10 +41,6 @@ const Home = ({
         onProductClick={onProductClick}
       />
     )}
-    <CTASection
-      onPrimaryAction={() => scrollToSection('#featured')}
-      onSecondaryAction={() => scrollToSection('#contact')}
-    />
   </main>
 );
 

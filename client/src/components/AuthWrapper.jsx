@@ -12,6 +12,7 @@ import AuraBackground from './AuraBackground.jsx';
 import Chatbot from './Chatbot.jsx';
 import Home from '../pages/Home.jsx';
 import ProductDetails from '../pages/ProductDetails.jsx';
+import SearchResults from '../pages/SearchResults.jsx';
 import AdminLayout from '../pages/admin/AdminLayout.jsx';
 import AdminLogin from '../pages/admin/Login.jsx'; // Renamed to avoid conflict
 import Dashboard from '../pages/admin/Dashboard.jsx';
@@ -137,13 +138,10 @@ const AuthWrapper = () => {
 
     const categoryExplore = useCallback(
         (categoryId) => {
-            if (categoryId === 'kids') {
-                scrollToSection('#trending');
-                return;
-            }
-            scrollToSection('#featured');
+            // Navigate to category page
+            navigate(`/category/${categoryId}`);
         },
-        [scrollToSection],
+        [navigate],
     );
 
     const handleProductNavigate = useCallback(
@@ -181,6 +179,58 @@ const AuthWrapper = () => {
                 <Route path="/verify-otp" element={<OtpVerify />} />
                 <Route path="/login" element={<UserLogin />} />
                 <Route path="/profile" element={<Profile />} />
+                <Route
+                    path="/search/:query"
+                    element={
+                        <>
+                            <AuraBackground />
+                            <Navbar
+                                onShopClick={() => navigate('/')}
+                                cartCount={cartItems.length}
+                                onCartClick={() => setIsCartOpen((prev) => !prev)}
+                            />
+                            <SearchResults
+                                onAddToCart={handleAddToCart}
+                                onProductClick={handleProductNavigate}
+                            />
+                            <Footer />
+                            <Chatbot userId={user?.id} />
+                            <CartDrawer
+                                isOpen={isCartOpen}
+                                items={cartItemsWithIds}
+                                total={cartTotal}
+                                onClose={() => setIsCartOpen(false)}
+                                onRemoveItem={handleRemoveFromCart}
+                            />
+                        </>
+                    }
+                />
+                <Route
+                    path="/category/:category"
+                    element={
+                        <>
+                            <AuraBackground />
+                            <Navbar
+                                onShopClick={() => navigate('/')}
+                                cartCount={cartItems.length}
+                                onCartClick={() => setIsCartOpen((prev) => !prev)}
+                            />
+                            <SearchResults
+                                onAddToCart={handleAddToCart}
+                                onProductClick={handleProductNavigate}
+                            />
+                            <Footer />
+                            <Chatbot userId={user?.id} />
+                            <CartDrawer
+                                isOpen={isCartOpen}
+                                items={cartItemsWithIds}
+                                total={cartTotal}
+                                onClose={() => setIsCartOpen(false)}
+                                onRemoveItem={handleRemoveFromCart}
+                            />
+                        </>
+                    }
+                />
                 <Route
                     path="/"
                     element={
