@@ -1,12 +1,10 @@
 import { LayoutGroup, motion } from 'framer-motion';
-import { useState } from 'react';
 import { Link } from 'react-router-dom'; // Import Link
 import { useAuth } from '../contexts/AuthContext'; // Import useAuth
 import VisualSearch from './VisualSearch.jsx';
 import VoiceSearch from './VoiceSearch.jsx';
 import LanguageSwitcher from './LanguageSwitcher.jsx';
 import './Navbar.css';
-import Drawer from './Drawer.jsx';
 
 const navLinks = [
   { label: 'Hero', href: '#hero' },
@@ -17,9 +15,6 @@ const navLinks = [
 ];
 
 const Navbar = ({ onShopClick = () => {}, cartCount = 0, onCartClick = () => {} }) => {
-  const [drawerOpen, setDrawerOpen] = useState(false);
-  const toggleDrawer = () => setDrawerOpen((s) => !s);
-  const closeDrawer = () => setDrawerOpen(false);
   const { user, logout } = useAuth(); // Use useAuth hook
   const handleNavClick = (event, href) => {
     event.preventDefault();
@@ -33,11 +28,6 @@ const Navbar = ({ onShopClick = () => {}, cartCount = 0, onCartClick = () => {} 
     <header className="nav-shell">
       <button className="logo" onClick={onShopClick}>
         tryon collective
-      </button>
-      <button className="hamburger" onClick={toggleDrawer} aria-label="Open menu">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M3 6h18M3 12h18M3 18h18" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
       </button>
       <LayoutGroup>
         <nav>
@@ -89,25 +79,6 @@ const Navbar = ({ onShopClick = () => {}, cartCount = 0, onCartClick = () => {} 
           </motion.span>
         </motion.button>
       </div>
-      <Drawer open={drawerOpen} onClose={closeDrawer}>
-        <div style={{ padding: 16 }}>
-          <nav style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-            {navLinks.map((link) => (
-              <a key={link.href} href={link.href} onClick={(e) => { e.preventDefault(); handleNavClick(e, link.href); closeDrawer(); }} style={{ color: '#fff', textDecoration: 'none' }}>{link.label}</a>
-            ))}
-          </nav>
-          <div style={{ marginTop: 24 }}>
-            {user ? (
-              <>
-                <Link to="/profile" onClick={closeDrawer} style={{ color: '#fff', display: 'block', marginBottom: 8 }}>Profile</Link>
-                <button onClick={() => { logout(); closeDrawer(); }} style={{ display: 'block' }}>Logout</button>
-              </>
-            ) : (
-              <Link to="/login" onClick={closeDrawer} style={{ color: '#fff' }}>Login</Link>
-            )}
-          </div>
-        </div>
-      </Drawer>
     </header>
   );
 };

@@ -22,7 +22,6 @@ const Signup = () => {
             localStorage.setItem('signupPassword', password);
             navigate('/verify-otp');
         } catch (error) {
-
             setMessage(error.response?.data?.message || 'Signup failed');
         }
     };
@@ -40,9 +39,6 @@ const Signup = () => {
                         </a>
                     </p>
                 </div>
-                        <div style={{ position: 'absolute', left: 16, top: 18 }}>
-                            <button onClick={() => navigate(-1)} aria-label="Go back" className="px-3 py-1 rounded bg-white/5">← Back</button>
-                        </div>
                 <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
                     <div className="rounded-md shadow-sm -space-y-px">
                         <div>
