@@ -59,34 +59,12 @@ const AuthWrapper = () => {
         let active = true;
 
         const loadContent = async () => {
-            try {
-                const endpoints = ['hero', 'featured', 'trending'];
-                const [hero, featured, trending] = await Promise.all(
-                    endpoints.map(async (endpoint) => {
-                        const response = await fetch(`${API_BASE_URL}/${endpoint}`); // Adjusted API_BASE_URL usage
-                        if (!response.ok) {
-                            throw new Error(`Failed to load ${endpoint}`);
-                        }
-                        return response.json();
-                    }),
-                );
-
-                if (active) {
-                    setHeroSlides(hero);
-                    setFeaturedProducts(featured);
-                    setTrendingOutfits(trending);
-                }
-            } catch (error) {
-                console.warn('Falling back to local seed content', error);
-                if (active) {
-                    setHeroSlides(fetchHeroSlides());
-                    setFeaturedProducts(fetchFeaturedProducts());
-                    setTrendingOutfits(fetchTrendingOutfits());
-                }
-            } finally {
-                if (active) {
-                    setIsHydrated(true);
-                }
+            // Use local content directly to ensure images and text are correct
+            if (active) {
+                setHeroSlides(fetchHeroSlides());
+                setFeaturedProducts(fetchFeaturedProducts());
+                setTrendingOutfits(fetchTrendingOutfits());
+                setIsHydrated(true);
             }
         };
 

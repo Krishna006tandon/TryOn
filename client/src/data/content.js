@@ -1,27 +1,50 @@
+import hero1 from '../images/1.png';
+import hero2 from '../images/2.png';
+import hero3 from '../images/3.png';
+import hero4 from '../images/4.png';
+import hero5 from '../images/5.png';
+import menCategory from '../images/men_category.png';
+import womenCategory from '../images/women_category.png';
+import kidsCategory from '../images/kids_category.png';
+
 const placeholder = (path) =>
   `https://images.unsplash.com/${path}?auto=format&fit=crop&w=1600&q=80`;
 
 export const fetchHeroSlides = () => [
   {
     id: 1,
-    title: 'New Nordic Layers',
-    subtitle: 'Elevate everyday staples with sculpted tailoring.',
-    cta: 'Shop Now',
-    image: placeholder('photo-1475180098004-ca77a66827be'),
+    title: 'Discover Your Style. Wear Your Confidence.',
+    subtitle: '',
+    cta: 'Shop Bestsellers',
+    image: hero1,
   },
   {
     id: 2,
-    title: 'Soft Pastel Resort',
-    subtitle: 'Airy silhouettes & sunkissed palettes land today.',
-    cta: 'Explore Collection',
-    image: placeholder('photo-1487412720507-e7ab37603c6f'),
+    title: 'Timeless Essentials for the Modern You.',
+    subtitle: '',
+    cta: 'Shop Bestsellers',
+    image: hero2,
   },
   {
     id: 3,
-    title: 'City Night Edit',
-    subtitle: 'Monochrome textures for after-dark statements.',
-    cta: 'Shop Now',
-    image: placeholder('photo-1434389677669-e08b4cac3105'),
+    title: 'Be Bold. Be Stylish. Be You.',
+    subtitle: '',
+    cta: 'Shop Bestsellers',
+    image: hero3,
+  },
+  {
+    id: 4,
+    title: 'Fresh Styles Just Dropped — Grab Yours Before They\'re Gone!',
+    subtitle: '',
+    cta: 'Shop Bestsellers',
+    image: hero4,
+  },
+  {
+    id: 5,
+    title: 'Join Thousands Who Upgraded Their Wardrobe Today',
+    subtitle: '',
+    cta: 'Shop Bestsellers',
+    image: hero5,
   },
 ];
 
@@ -29,19 +52,19 @@ export const fetchCategoryTiles = () => [
   {
     id: 'men',
     label: 'Men',
-    image: placeholder('photo-1521572163474-6864f9cf17ab'),
+    image: menCategory,
     accent: '#a5b4b4',
   },
   {
     id: 'women',
     label: 'Women',
-    image: placeholder('photo-1518544801958-efcbf8a7ec10'),
+    image: womenCategory,
     accent: '#d5c5bc',
   },
   {
     id: 'kids',
     label: 'Kids',
-    image: placeholder('photo-1504593811423-6dd665756598'),
+    image: kidsCategory,
     accent: '#fbd5c0',
   },
 ];
