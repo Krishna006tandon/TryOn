@@ -1,0 +1,18 @@
+/* CategorySection uses TrendingOutfits styles */
+.section-head {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.section-head h2 {
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-family: 'Poppins', sans-serif;
+  color: #f9f9ff;
+  margin-bottom: 0.5rem;
+}
+
+.section-head p {
+  color: var(--muted, rgba(255, 255, 255, 0.6));
+  font-size: 1.1rem;
+}
+

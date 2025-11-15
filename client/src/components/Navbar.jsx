@@ -1,11 +1,13 @@
 import { useState, useRef, useEffect } from 'react';
 import { LayoutGroup, motion, AnimatePresence } from 'framer-motion';
-import { Link, useNavigate } from 'react-router-dom'; // Import Link and useNavigate
+import { Link, useNavigate, useLocation } from 'react-router-dom'; // Import Link and useNavigate
 import { useAuth } from '../contexts/AuthContext'; // Import useAuth
+import { useTheme } from '../contexts/ThemeContext'; // Import useTheme
 import VisualSearch from './VisualSearch.jsx';
 import VoiceSearch from './VoiceSearch.jsx';
 import LanguageSwitcher from './LanguageSwitcher.jsx';
-import TryOnLogo from '../images/TryOn_Dark.png';
+import TryOnLogoDark from '../images/TryOn_Dark.png';
+import TryOnLogoLight from '../images/TryOn_Light.jpg';
 import './Navbar.css';
 
 const navLinks = [
@@ -14,7 +16,6 @@ const navLinks = [
 ];
 
 const searchSuggestions = [
-  'T Shirt',
   'Kurta',
   'Lehenga',
   'Tuxedo',
@@ -24,23 +25,45 @@ const searchSuggestions = [
   'Shirt',
   'Sherwani',
   'Anarkali',
+  'T Shirt',
 ];
 
 const Navbar = ({ onShopClick = () => {}, cartCount = 0, onCartClick = () => {} }) => {
   const { user, logout } = useAuth(); // Use useAuth hook
+  const { isDark } = useTheme(); // Get theme
   const navigate = useNavigate();
+  const location = useLocation();
   const [searchValue, setSearchValue] = useState('');
   const [showSuggestions, setShowSuggestions] = useState(false);
   const searchRef = useRef(null);
   const suggestionsRef = useRef(null);
   const searchActionsRef = useRef(null);
 
+  // Check if we're on search results page
+  const isSearchPage = location.pathname.startsWith('/search') || location.pathname.startsWith('/category');
+
   const handleNavClick = (event, href) => {
     event.preventDefault();
-    const target = document.querySelector(href);
-    if (target) {
-      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    // Navigate to home page first
+    if (location.pathname !== '/') {
+      navigate('/');
+      // Wait for navigation then scroll
+      setTimeout(() => {
+        const target = document.querySelector(href);
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, 100);
+    } else {
+      const target = document.querySelector(href);
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
     }
+  };
+
+  const handleBackClick = () => {
+    navigate('/');
   };
 
   // Close suggestions when clicking outside
@@ -89,10 +112,18 @@ const Navbar = ({ onShopClick = () => {}, cartCount = 0, onCartClick = () => {} 
 
   return (
     <header className="nav-shell">
-      <button className="logo" onClick={onShopClick}>
-        <img src={TryOnLogo} alt="TryOn Logo" className="logo-image" />
-        tryon collective
-      </button>
+      {isSearchPage ? (
+        <button className="back-button" onClick={handleBackClick}>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M19 12H5M12 19l-7-7 7-7" />
+          </svg>
+        </button>
+      ) : (
+        <button className="logo" onClick={onShopClick}>
+          <img src={isDark ? TryOnLogoDark : TryOnLogoLight} alt="TryOn Logo" className="logo-image" />
+          tryon collective
+        </button>
+      )}
       <LayoutGroup>
         <nav>
           {navLinks.map((link) => (

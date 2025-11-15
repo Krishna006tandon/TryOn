@@ -27,9 +27,30 @@
 }
 
 .logo-image {
-  height: 3rem;
+  height: 4rem;
   width: auto;
   object-fit: contain;
+}
+
+.back-button {
+  background: none;
+  border: none;
+  color: #f9f9ff;
+  cursor: pointer;
+  padding: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease;
+}
+
+.back-button:hover {
+  transform: translateX(-4px);
+}
+
+.back-button svg {
+  width: 28px;
+  height: 28px;
 }
 
 nav {
