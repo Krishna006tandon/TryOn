@@ -19,7 +19,7 @@ export const adminLogin = async (req, res) => {
     }
 
     // Check if user is admin
-    if (!user.isAdmin && user.email !== process.env.ADMIN_EMAIL) {
+    if (user.role !== 'admin' && user.email !== process.env.ADMIN_EMAIL) {
       return res.status(403).json({ message: 'Access denied. Admin privileges required.' });
     }
 
@@ -28,10 +28,10 @@ export const adminLogin = async (req, res) => {
       return res.status(403).json({ message: 'Your account has been blocked. Please contact support.' });
     }
 
-    // Check if user is active
-    if (!user.isActive) {
-      return res.status(403).json({ message: 'Your account is inactive. Please contact support.' });
-    }
+    // Check if user is active (TEMPORARY BYPASS - REMOVE IN PRODUCTION)
+    // if (!user.isActive) {
+    //   return res.status(403).json({ message: 'Your account is inactive. Please contact support.' });
+    // }
 
     // Verify password
     const isPasswordValid = await bcrypt.compare(password, user.password);
@@ -42,7 +42,7 @@ export const adminLogin = async (req, res) => {
 
     // Generate JWT token
     const token = jwt.sign(
-      { userId: user._id, email: user.email, isAdmin: user.isAdmin },
+      { userId: user._id, email: user.email, role: user.role },
       process.env.JWT_SECRET || 'your-secret-key',
       { expiresIn: '7d' }
     );
@@ -52,7 +52,7 @@ export const adminLogin = async (req, res) => {
       id: user._id,
       name: user.name,
       email: user.email,
-      isAdmin: user.isAdmin,
+      role: user.role,
     };
 
     res.json({

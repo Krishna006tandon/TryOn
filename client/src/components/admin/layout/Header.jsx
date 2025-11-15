@@ -1,6 +1,9 @@
-import { Search, Bell, User, Menu } from 'lucide-react';
+import { Search, Bell, User, Menu, Sun, Moon } from 'lucide-react';
+import { useTheme } from '../../../contexts/ThemeContext';
 
 const Header = ({ onMenuClick }) => {
+  const { theme, toggleTheme } = useTheme();
+
   return (
     <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
       <button
@@ -18,6 +21,9 @@ const Header = ({ onMenuClick }) => {
         />
       </div>
       <div className="flex items-center gap-4 md:ml-auto">
+        <button onClick={toggleTheme} className="p-2 rounded-full hover:bg-accent">
+          {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+        </button>
         <button className="p-2 rounded-full hover:bg-accent">
           <Bell className="h-5 w-5" />
         </button>

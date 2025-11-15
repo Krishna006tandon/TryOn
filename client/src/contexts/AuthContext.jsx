@@ -22,7 +22,7 @@ export const AuthProvider = ({ children }) => {
         try {
           // Verify token and get current user info
           // Assuming /api/auth/me is a protected route that returns user info
-          const response = await api.get('/api/auth/me', {
+          const response = await api.get('/auth/me', {
             headers: {
               Authorization: `Bearer ${token}`,
             },
@@ -40,9 +40,18 @@ export const AuthProvider = ({ children }) => {
     verifyToken();
   }, []);
 
-  const login = (token, userData) => {
-    localStorage.setItem('authToken', token);
-    setUser(userData);
+  const login = async (email, password) => {
+    try {
+      const response = await api.post('/admin/login', { email, password });
+      const { token, user } = response.data;
+
+      localStorage.setItem('authToken', token);
+      setUser(user);
+      return { success: true, user };
+    } catch (error) {
+      console.error('Login failed:', error);
+      return { success: false, error: error.response?.data?.message || 'Login failed' };
+    }
   };
 
   const logout = () => {
