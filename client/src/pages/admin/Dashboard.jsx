@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import api from '../../utils/api';
 import StatCard from '../../components/admin/dashboard/StatCard';
@@ -10,9 +11,18 @@ const Dashboard = () => {
   const [dashboardData, setDashboardData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const location = useLocation();
+  const [notice, setNotice] = useState('');
 
   useEffect(() => {
     fetchDashboardData();
+    // show message if redirected from login
+    if (location?.state?.message) {
+      setNotice(location.state.message);
+      // clear the message so it doesn't persist on refresh
+      window.history.replaceState({}, document.title);
+      setTimeout(() => setNotice(''), 4000);
+    }
   }, []);
 
   const fetchDashboardData = async () => {
@@ -61,6 +71,14 @@ const Dashboard = () => {
       transition={{ duration: 0.5 }}
       className="space-y-6"
     >
+      {notice && (
+        <Card className="border-green-600 bg-green-50">
+          <CardHeader>
+            <CardTitle className="text-green-700">{notice}</CardTitle>
+          </CardHeader>
+        </Card>
+      )}
+
       {error && (
         <Card className="bg-destructive/10 border-destructive/50">
           <CardHeader>

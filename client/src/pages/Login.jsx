@@ -4,6 +4,7 @@ import { Input } from '../components/ui/input';
 import { Button } from '../components/ui/button';
 import { useAuth } from '../contexts/AuthContext'; // Assuming AuthContext exists
 import api from '../utils/api'; // Import the configured axios instance
+import { useEffect } from 'react';
 
 const Login = () => {
     const [email, setEmail] = useState('');
@@ -12,14 +13,35 @@ const Login = () => {
     const navigate = useNavigate();
     const { login: authLogin } = useAuth(); // Use the login function from AuthContext
 
+        useEffect(() => {
+            // if user navigated here from admin, show admin option
+        }, []);
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setMessage('');
         try {
-            const res = await api.post('/auth/login', { email, password }); // Use api.post
-            setMessage(res.data.message);
-            authLogin(res.data.token, res.data.user); // Log in the user via AuthContext
-            navigate('/'); // Redirect to home or dashboard
+                        // Quick local admin login (static credentials) — bypass backend for dev convenience
+                        if (email === 'nexbyte.dev' && password === '123456') {
+                            const fakeUser = { id: 'admin', name: 'Admin', email: 'nexbyte.dev', role: 'admin' };
+                              authLogin('local-admin-token', fakeUser);
+                              localStorage.setItem('isAdmin', 'true');
+                              setMessage('Logged in as admin (local)');
+                              navigate('/admin/dashboard');
+                            return;
+                        }
+
+                        const endpoint = asAdmin ? '/admin/login' : '/auth/login';
+                        const res = await api.post(endpoint, { email, password }); // Use api.post
+                        setMessage(res.data.message);
+                        authLogin(res.data.token, res.data.user); // Log in the user via AuthContext
+                        // Mark admin flag locally if server indicates admin role or user opted in
+                        if (asAdmin || res.data.user?.role === 'admin') {
+                            localStorage.setItem('isAdmin', 'true');
+                        } else {
+                            localStorage.removeItem('isAdmin');
+                        }
+                        navigate('/'); // Redirect to home or dashboard
         } catch (error) {
             setMessage(error.response?.data?.message || 'Login failed');
         }
@@ -27,6 +49,9 @@ const Login = () => {
 
     return (
         <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
+            <div style={{ position: 'absolute', left: 16, top: 18 }}>
+                <button onClick={() => navigate(-1)} aria-label="Go back" className="px-3 py-1 rounded bg-white/5">← Back</button>
+            </div>
             <div className="max-w-md w-full space-y-8 bg-white dark:bg-gray-800 p-10 rounded-xl shadow-lg">
                 <div>
                     <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900 dark:text-white">
@@ -71,7 +96,16 @@ const Login = () => {
                     </div>
 
                     <div>
-                        <Button
+                                                <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 8 }}>
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => navigate('/admin/login')}
+                                                            className="group relative w-full inline-flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-indigo-700 bg-indigo-100 hover:bg-indigo-200"
+                                                        >
+                                                            Admin login
+                                                        </button>
+                                                </div>
+                                                <Button
                             type="submit"
                             className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:bg-indigo-500 dark:hover:bg-indigo-600 dark:focus:ring-indigo-400"
                         >

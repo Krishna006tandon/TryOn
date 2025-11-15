@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useAuth } from '../../contexts/AuthContext';
+import api from '../../utils/api';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -16,13 +17,29 @@ const Login = () => {
     setError('');
     setLoading(true);
 
-    const result = await login(email, password);
-    setLoading(false);
+    try {
+      // Dev fallback: accept local static admin credentials
+      if (email === 'tryon@gmail.com' && password === 'try123') {
+        const fakeUser = { id: 'admin-local', name: 'Admin', email: 'tryon@gmail.com', role: 'admin' };
+        login('local-admin-token', fakeUser);
+        localStorage.setItem('isAdmin', 'true');
+        setLoading(false);
+        navigate('/admin/dashboard', { state: { message: 'Admin login successful' } });
+        return;
+      }
 
-    if (result.success) {
-      navigate('/admin/dashboard');
-    } else {
-      setError(result.error || 'Invalid credentials');
+      // Try backend admin login if available
+      const res = await api.post('/admin/login', { email, password });
+      const token = res.data.token || res.data.accessToken || '';
+      const user = res.data.user || res.data;
+      login(token, user);
+      localStorage.setItem('isAdmin', 'true');
+      setLoading(false);
+      navigate('/admin/dashboard', { state: { message: 'Admin login successful' } });
+    } catch (err) {
+      console.error('Admin login error', err);
+      setError(err.response?.data?.message || 'Invalid credentials');
+      setLoading(false);
     }
   };
 

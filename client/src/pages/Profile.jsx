@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import api from '../utils/api';
 import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import { useCallback } from 'react';
 
 const Profile = () => {
     const { user, loading, logout } = useAuth();
@@ -48,6 +49,9 @@ const Profile = () => {
 
     return (
         <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
+            <div style={{ position: 'absolute', left: 16, top: 18 }}>
+                <button onClick={() => window.history.back()} aria-label="Go back" className="px-3 py-1 rounded bg-white/5">← Back</button>
+            </div>
             <div className="max-w-2xl w-full space-y-8 bg-white dark:bg-gray-800 p-10 rounded-xl shadow-lg">
                 <div>
                     <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900 dark:text-white">

@@ -117,3 +117,67 @@ nav {
   }
 }
 
+/* Hamburger visible on small screens */
+
+.hamburger {
+  display: none;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+  position: absolute;
+  left: 8px;
+  top: 8px;
+  z-index: 120;
+}
+
+@media (max-width: 960px) {
+  .hamburger {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 960px) {
+  .nav-shell {
+    padding-left: 56px; /* leave room for left hamburger */
+  }
+
+  /* hide heavy actions on small screens to keep header stable */
+  .nav-actions {
+    display: none;
+  }
+  nav {
+    display: none;
+  }
+}
+
+/* Drawer styles */
+.drawer-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 60;
+}
+.drawer-panel {
+  position: fixed;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 280px;
+  background: linear-gradient(180deg, rgba(7,16,41,0.98), rgba(15,23,42,0.98));
+  color: #fff;
+  z-index: 70;
+  box-shadow: 6px 0 20px rgba(0,0,0,0.5);
+  transform: translateX(0);
+}
+.drawer-close {
+  background: transparent;
+  color: #fff;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+
