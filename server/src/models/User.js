@@ -1,85 +1,51 @@
 import mongoose from 'mongoose';
+import bcrypt from 'bcryptjs';
 
-const userSchema = new mongoose.Schema(
-  {
+const UserSchema = new mongoose.Schema({
     name: {
-      type: String,
-      required: true,
-      trim: true,
+        type: String,
+        required: true,
+        trim: true
     },
     email: {
-      type: String,
-      required: true,
-      unique: true,
-      lowercase: true,
-      trim: true,
-    },
-    phone: {
-      type: String,
-      trim: true,
+        type: String,
+        required: true,
+        unique: true,
+        trim: true,
+        lowercase: true,
+        match: [/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/, 'Please fill a valid email address']
     },
     password: {
-      type: String,
-      required: true,
+        type: String,
+        required: true,
+        minlength: 6
     },
-    address: {
-      street: String,
-      city: String,
-      state: String,
-      zipCode: String,
-      country: String,
+    role: {
+        type: String,
+        enum: ['user', 'admin'],
+        default: 'user'
     },
-    browsingHistory: [
-      {
-        productId: { type: mongoose.Schema.Types.ObjectId, ref: 'Product' },
-        viewedAt: { type: Date, default: Date.now },
-        category: String,
-      },
-    ],
-    purchaseHistory: [
-      {
-        orderId: { type: mongoose.Schema.Types.ObjectId, ref: 'Order' },
-        purchasedAt: { type: Date, default: Date.now },
-      },
-    ],
-    preferences: {
-      categories: [String],
-      priceRange: {
-        min: Number,
-        max: Number,
-      },
-      sizes: [String],
-      colors: [String],
-    },
-    language: {
-      type: String,
-      default: 'en',
-      enum: ['en', 'hi'],
-    },
-    isActive: {
-      type: Boolean,
-      default: true,
-    },
-    isAdmin: {
-      type: Boolean,
-      default: false,
-    },
-    isBlocked: {
-      type: Boolean,
-      default: false,
-    },
-  },
-  {
-    timestamps: true,
-  }
-);
+    verified: {
+        type: Boolean,
+        default: false
+    }
+}, {
+    timestamps: true
+});
 
-// Indexes for optimization
-userSchema.index({ email: 1 });
-userSchema.index({ 'browsingHistory.productId': 1 });
-userSchema.index({ 'purchaseHistory.orderId': 1 });
+// Hash password before saving
+UserSchema.pre('save', async function (next) {
+    if (!this.isModified('password')) {
+        return next();
+    }
+    const salt = await bcrypt.genSalt(10);
+    this.password = await bcrypt.hash(this.password, salt);
+    next();
+});
 
-const User = mongoose.model('User', userSchema);
+// Method to compare passwords
+UserSchema.methods.matchPassword = async function (enteredPassword) {
+    return await bcrypt.compare(enteredPassword, this.password);
+};
 
-export default User;
-
+export default mongoose.model('User', UserSchema);

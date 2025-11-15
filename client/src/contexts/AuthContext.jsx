@@ -17,15 +17,20 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     const verifyToken = async () => {
-      const token = localStorage.getItem('adminToken');
+      const token = localStorage.getItem('authToken');
       if (token) {
         try {
           // Verify token and get current user info
-          const response = await api.get('/api/admin/me');
+          // Assuming /api/auth/me is a protected route that returns user info
+          const response = await api.get('/api/auth/me', {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
           setUser(response.data);
         } catch (error) {
           // Token is invalid, remove it
-          localStorage.removeItem('adminToken');
+          localStorage.removeItem('authToken');
           setUser(null);
         }
       }
@@ -35,22 +40,13 @@ export const AuthProvider = ({ children }) => {
     verifyToken();
   }, []);
 
-  const login = async (email, password) => {
-    try {
-      const response = await api.post('/api/admin/login', { email, password });
-      const { token, user: userData } = response.data;
-      
-      localStorage.setItem('adminToken', token);
-      setUser(userData);
-      return { success: true };
-    } catch (error) {
-      const errorMessage = error.response?.data?.message || error.message || 'Login failed';
-      return { success: false, error: errorMessage };
-    }
+  const login = (token, userData) => {
+    localStorage.setItem('authToken', token);
+    setUser(userData);
   };
 
   const logout = () => {
-    localStorage.removeItem('adminToken');
+    localStorage.removeItem('authToken');
     setUser(null);
   };
 

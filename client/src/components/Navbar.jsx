@@ -1,4 +1,6 @@
 import { LayoutGroup, motion } from 'framer-motion';
+import { Link } from 'react-router-dom'; // Import Link
+import { useAuth } from '../contexts/AuthContext'; // Import useAuth
 import VisualSearch from './VisualSearch.jsx';
 import VoiceSearch from './VoiceSearch.jsx';
 import LanguageSwitcher from './LanguageSwitcher.jsx';
@@ -13,6 +15,7 @@ const navLinks = [
 ];
 
 const Navbar = ({ onShopClick = () => {}, cartCount = 0, onCartClick = () => {} }) => {
+  const { user, logout } = useAuth(); // Use useAuth hook
   const handleNavClick = (event, href) => {
     event.preventDefault();
     const target = document.querySelector(href);
@@ -50,6 +53,20 @@ const Navbar = ({ onShopClick = () => {}, cartCount = 0, onCartClick = () => {} 
           <VisualSearch />
           <VoiceSearch />
           <LanguageSwitcher />
+          {user ? ( // Conditionally render Profile link and Logout button
+            <>
+              <Link to="/profile" className="px-3 py-1 text-sm border rounded hover:bg-gray-100 transition-colors">
+                Profile
+              </Link>
+              <button onClick={logout} className="px-3 py-1 text-sm border rounded hover:bg-gray-100 transition-colors">
+                Logout
+              </button>
+            </>
+          ) : (
+            <Link to="/login" className="px-3 py-1 text-sm border rounded hover:bg-gray-100 transition-colors">
+              Login
+            </Link>
+          )}
         </div>
         <motion.button className="nav-cart" whileTap={{ scale: 0.9 }} onClick={onCartClick}>
           Cart
