@@ -27,6 +27,7 @@ router.get('/dashboard/overview', dashboardController.getDashboardOverview);
 
 // User Management
 router.get('/users', userController.getAllUsers);
+router.post('/users', userController.createUser);
 router.get('/users/stats', userController.getUserStats);
 router.get('/users/:id', userController.getUserById);
 router.put('/users/:id', userController.updateUser);

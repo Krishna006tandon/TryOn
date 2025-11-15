@@ -73,6 +73,33 @@ export const getUserById = async (req, res) => {
   }
 };
 
+// Create a new user
+export const createUser = async (req, res) => {
+  try {
+    const { name, email, password } = req.body;
+
+    // Check if user already exists
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ message: 'User with this email already exists' });
+    }
+
+    // Create and save the new user
+    const newUser = new User({
+      name,
+      email,
+      password, // Password will be hashed by the pre-save hook in the User model
+    });
+
+    await newUser.save();
+
+    const userToReturn = await User.findById(newUser._id).select('-password');
+    res.status(201).json({ message: 'User created successfully', user: userToReturn });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 // Update user details
 export const updateUser = async (req, res) => {
   try {
@@ -162,4 +189,5 @@ export const getUserStats = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
 

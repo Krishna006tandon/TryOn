@@ -7,12 +7,18 @@ import CartDrawer from './components/CartDrawer.jsx';
 import QuickViewModal from './components/QuickViewModal.jsx';
 import AuraBackground from './components/AuraBackground.jsx';
 import Chatbot from './components/Chatbot.jsx';
-import PersonalizedOffers from './components/PersonalizedOffers.jsx';
 import Home from './pages/Home.jsx';
 import ProductDetails from './pages/ProductDetails.jsx';
 import AdminLayout from './pages/admin/AdminLayout.jsx';
 import Login from './pages/admin/Login.jsx';
 import Dashboard from './pages/admin/Dashboard.jsx';
+import Users from './pages/admin/Users.jsx';
+import Products from './pages/admin/Products.jsx';
+import Categories from './pages/admin/Categories.jsx';
+import Orders from './pages/admin/Orders.jsx';
+import Analytics from './pages/admin/Analytics.jsx';
+import Notifications from './pages/admin/Notifications.jsx';
+import Coupons from './pages/admin/Coupons.jsx';
 import { fetchHeroSlides, fetchFeaturedProducts, fetchTrendingOutfits } from './data/content.js';
 import './i18n/config.js';
 
@@ -167,6 +173,13 @@ function App() {
         <Route path="/admin/login" element={<Login />} />
         <Route path="/admin" element={<AdminLayout />}>
           <Route path="dashboard" element={<Dashboard />} />
+          <Route path="users" element={<Users />} />
+          <Route path="products" element={<Products />} />
+          <Route path="categories" element={<Categories />} />
+          <Route path="orders" element={<Orders />} />
+          <Route path="analytics" element={<Analytics />} />
+          <Route path="notifications" element={<Notifications />} />
+          <Route path="coupons" element={<Coupons />} />
         </Route>
 
         {/* Public Routes */}
@@ -247,4 +260,3 @@ function App() {
 }
 
 export default App;
-
