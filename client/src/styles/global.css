@@ -6,6 +6,9 @@
 
 :root {
   font-family: 'Montserrat', 'Poppins', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --header-height: 96px;
+  --drawer-width: 280px;
+  --safe-padding: 20px;
   color: #f4f4fb;
   background-color: #050507;
   line-height: 1.6;
@@ -66,9 +69,36 @@ body::before {
 main {
   width: min(1200px, 92vw);
   margin: 0 auto;
-  padding: 1rem 0 6rem;
+  padding: calc(var(--header-height) + 1rem) 0 6rem;
+  padding-left: var(--safe-padding);
+  padding-right: var(--safe-padding);
   position: relative;
   z-index: 1;
+}
+
+/* When drawer is open, shift content on wide screens so drawer doesn't fully overlay */
+body.drawer-open main {
+  transform: translateX(var(--drawer-width));
+  transition: transform 220ms ease;
+}
+
+/* Drawer panel tweaks */
+.drawer-panel {
+  width: min(var(--drawer-width), 86vw);
+  max-width: var(--drawer-width);
+  padding: 16px;
+}
+
+/* Basic responsive helpers */
+img, svg {
+  max-width: 100%;
+  height: auto;
+}
+
+table {
+  width: 100%;
+  display: block;
+  overflow-x: auto;
 }
 
 a {

@@ -1,10 +1,15 @@
 .nav-shell {
-  position: sticky;
+  --header-height: var(--header-height, 83.9%);
+  position: fixed;
+  left: 0;
   top: 0;
-  z-index: 100;
+  width: 100%;
+  height: var(--header-height, 90px);
+  z-index: 120;
   display: flex;
   justify-content: space-between;
   align-items: center;
+
   padding: 1.1rem 4vw;
   background: rgba(5, 5, 10, 0.9) !important;
   backdrop-filter: blur(18px);
@@ -16,6 +21,12 @@ html.light .nav-shell,
 html.dark .nav-shell {
   background: rgba(5, 5, 10, 0.9) !important;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+
+  padding: 0 4vw;
+  background: rgba(5, 5, 10, 0.95);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--stroke);
+
 }
 
 .logo {
@@ -28,6 +39,7 @@ html.dark .nav-shell {
   border: none;
   padding: 0;
   cursor: pointer;
+
   display: flex;
   align-items: center;
   gap: 0.75rem;
@@ -70,6 +82,27 @@ html.dark .back-button {
 .back-button svg {
   width: 28px;
   height: 28px;
+
+  white-space: nowrap;
+  margin: 0 auto;
+  flex: 1;
+  text-align: center;
+  border-left: 25px solid transparent;
+}
+
+@media (max-width: 960px) {
+  .logo {
+    font-size: 0.85rem;
+    letter-spacing: 0.2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .logo {
+    font-size: 0.75rem;
+    letter-spacing: 0.15rem;
+  }
+
 }
 
 nav {
@@ -245,7 +278,8 @@ html.dark .search-actions {
 
 .cart-badge {
   position: absolute;
-  top: -10px;
+  top: 3px;
+  down:3px;
   right: -10px;
   background: var(--accent-secondary);
   color: #fff;
@@ -327,5 +361,76 @@ html.dark .profile-icon-btn {
   .search input {
     width: 120px;
   }
+
+  /* center logo and leave space for left hamburger */
+  .logo {
+    margin: 0 auto;
+    font-size: 0.95rem;
+    letter-spacing: 0.25rem;
+  }
+
+  /* Hide auth & language buttons on mobile, keep cart & search */
+  .nav-actions {
+    gap: 0.5rem;
+  }
+
+  .visual-search,
+  .voice-search,
+  .language-switcher,
+  .nav-auth-buttons {
+    display: none;
+  }
+
+  .nav-cart {
+    padding: 0.6rem 1rem;
+    font-size: 0.9rem;
+  }
+}
+
+/* Hamburger & Drawer styles */
+.hamburger {
+  display: inline-flex;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 130;
+  color: #fff;
+}
+
+.drawer-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  z-index: 120;
+}
+.drawer-panel {
+  position: fixed;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 280px;
+  background: linear-gradient(180deg, rgba(7,16,41,0.98), rgba(15,23,42,0.98));
+  color: #fff;
+  z-index: 130;
+  box-shadow: 6px 0 20px rgba(0,0,0,0.5);
+  transform: translateX(0);
+}
+.drawer-close {
+  background: transparent;
+  color: #fff;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+/* Hide heavy header elements on very small screens */
+@media (max-width: 420px) {
+  .logo { font-size: 0.85rem; }
+  .search { display: none; }
 }
 
