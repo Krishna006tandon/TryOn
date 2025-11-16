@@ -21,7 +21,7 @@
     },
     {
       "src": "/(.*)",
-      "dest": "client/build"
+      "dest": "client/build/index.html"
     }
   ]
 }
