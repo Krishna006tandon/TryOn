@@ -30,7 +30,7 @@
   ],
   "builds": [
     {
-      "src": "client/index.html",
+      "src": "client/package.json",
       "use": "@vercel/static-build",
       "config": { "distDir": "client/dist" }
     },
