@@ -115,7 +115,19 @@ export const updateCategory = async (req, res) => {
 
     if (description !== undefined) category.description = description;
     if (image !== undefined) category.image = image;
-    if (isActive !== undefined) category.isActive = isActive;
+    if (isActive !== undefined) {
+      category.isActive = isActive;
+      // If category is being disabled, hide all products in this category
+      if (!isActive) {
+        await Product.updateMany(
+          { category: category._id },
+          { $set: { isActive: false } }
+        );
+      } else {
+        // If category is being enabled, products can be shown again (admin can manually enable them)
+        // We don't auto-enable products to give admin control
+      }
+    }
     if (displayOrder !== undefined) category.displayOrder = displayOrder;
 
     // Validate parent category if being updated
@@ -150,14 +162,6 @@ export const deleteCategory = async (req, res) => {
       return res.status(404).json({ message: 'Category not found' });
     }
 
-    // Check if category has products
-    const productCount = await Product.countDocuments({ category: category._id });
-    if (productCount > 0) {
-      return res.status(400).json({
-        message: `Cannot delete category. ${productCount} product(s) are associated with this category.`,
-      });
-    }
-
     // Check if category has subcategories
     const subcategoryCount = await Category.countDocuments({ parentCategory: category._id });
     if (subcategoryCount > 0) {
@@ -166,8 +170,21 @@ export const deleteCategory = async (req, res) => {
       });
     }
 
+    // Instead of preventing deletion, hide all products in this category
+    const productCount = await Product.countDocuments({ category: category._id });
+    if (productCount > 0) {
+      await Product.updateMany(
+        { category: category._id },
+        { $set: { isActive: false } }
+      );
+    }
+
+    // Delete the category
     await Category.findByIdAndDelete(req.params.id);
-    res.json({ message: 'Category deleted successfully' });
+    res.json({ 
+      message: `Category deleted successfully. ${productCount} product(s) have been hidden.`,
+      hiddenProducts: productCount
+    });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

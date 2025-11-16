@@ -18,12 +18,16 @@ const Dashboard = () => {
   const fetchDashboardData = async () => {
     try {
       setError(null);
-      const response = await api.get('/api/admin/dashboard/overview');
+      const response = await api.get('/admin/dashboard/overview');
       setDashboardData(response.data);
     } catch (error) {
       console.error('Error fetching dashboard data:', error);
-      const errorMessage = error.response?.data?.message || error.message || 'Failed to load dashboard data';
-      setError(errorMessage);
+      if (error.response?.status === 404) {
+        setError('Dashboard endpoint not found. Please check your backend route configuration.');
+      } else {
+        const errorMessage = error.response?.data?.message || error.message || 'Failed to load dashboard data';
+        setError(errorMessage);
+      }
     } finally {
       setLoading(false);
     }
