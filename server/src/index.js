@@ -9,7 +9,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Load .env file from server root directory
-dotenv.config({ path: path.join(__dirname, '../.env') });
+dotenv.config({ path: path.join(__dirname, '../../.env') });
 
 // Routes
 import recommendationRoutes from './routes/recommendationRoutes.js';
@@ -143,9 +143,11 @@ app.get('/api/health', (_req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
-app.listen(port, () => {
-  console.log(`Server ready on http://localhost:${port}`);
-});
+// app.listen(port, () => {
+//   console.log(`Server ready on http://localhost:${port}`);
+// });
+
+export default app;
 
 
 
