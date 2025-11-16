@@ -18,10 +18,12 @@
     {
       "src": "/api/(.*)",
       "dest": "server/src/index.js"
-    },
+    }
+  ],
+  "rewrites": [
     {
-      "src": "/(.*)",
-      "dest": "client/build/index.html"
+      "source": "/(.*)",
+      "destination": "/client/build/index.html"
     }
   ]
 }
