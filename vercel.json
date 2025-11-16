@@ -6,11 +6,11 @@
       "use": "@vercel/node"
     },
     {
-      "src": "client/package.json",
+      "src": "client/**",
       "use": "@vercel/static-build",
       "config": {
         "buildCommand": "npm run build",
-        "outputDirectory": "dist"
+        "outputDirectory": "client/dist"
       }
     }
   ],
