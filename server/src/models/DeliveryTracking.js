@@ -6,7 +6,6 @@ const deliveryTrackingSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Order',
       required: true,
-      index: true,
     },
     courierName: {
       type: String,
@@ -28,7 +27,6 @@ const deliveryTrackingSchema = new mongoose.Schema(
       type: String,
       enum: ['ordered', 'packed', 'shipped', 'out_for_delivery', 'delivered', 'cancelled'],
       default: 'ordered',
-      index: true,
     },
     logs: [
       {
@@ -63,7 +61,6 @@ const deliveryTrackingSchema = new mongoose.Schema(
 
 // Indexes
 deliveryTrackingSchema.index({ orderId: 1 });
-deliveryTrackingSchema.index({ trackingNumber: 1 });
 deliveryTrackingSchema.index({ status: 1 });
 
 const DeliveryTracking = mongoose.model('DeliveryTracking', deliveryTrackingSchema);

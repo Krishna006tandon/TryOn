@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useAuth } from '../../contexts/AuthContext';
 import api from '../../utils/api';
@@ -208,6 +208,11 @@ const Login = () => {
 
         <div style={{ marginTop: '24px', textAlign: 'center', fontSize: '14px', color: '#6b7280' }}>
           <p>Default: admin@tryon.com / admin123</p>
+          <p style={{ marginTop: '12px' }}>
+            <Link to="/login" style={{ color: '#2563eb', textDecoration: 'none' }}>
+              Go to User Login
+            </Link>
+          </p>
         </div>
       </motion.div>
     </div>

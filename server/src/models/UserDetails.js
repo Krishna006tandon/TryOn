@@ -7,7 +7,6 @@ const userDetailsSchema = new mongoose.Schema(
       ref: 'User',
       required: true,
       unique: true,
-      index: true,
     },
     username: {
       type: String,
@@ -71,7 +70,6 @@ const userDetailsSchema = new mongoose.Schema(
 );
 
 // Indexes
-userDetailsSchema.index({ userId: 1 });
 userDetailsSchema.index({ 'orders.orderId': 1 });
 
 const UserDetails = mongoose.model('UserDetails', userDetailsSchema);

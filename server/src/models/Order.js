@@ -11,7 +11,6 @@ const orderSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
       required: true,
-      index: true,
     },
     items: [
       {
@@ -80,7 +79,6 @@ const orderSchema = new mongoose.Schema(
       type: String,
       enum: ['pending', 'confirmed', 'processing', 'shipped', 'delivered', 'cancelled'],
       default: 'pending',
-      index: true,
     },
     deliveryTracking: {
       type: mongoose.Schema.Types.ObjectId,
@@ -99,7 +97,6 @@ const orderSchema = new mongoose.Schema(
 // Indexes
 orderSchema.index({ userId: 1, createdAt: -1 });
 orderSchema.index({ status: 1, createdAt: -1 });
-orderSchema.index({ orderNumber: 1 });
 
 const Order = mongoose.model('Order', orderSchema);
 

@@ -43,7 +43,6 @@ const categorySchema = new mongoose.Schema(
 );
 
 // Indexes
-categorySchema.index({ slug: 1 });
 categorySchema.index({ parentCategory: 1, isActive: 1 });
 
 const Category = mongoose.model('Category', categorySchema);
