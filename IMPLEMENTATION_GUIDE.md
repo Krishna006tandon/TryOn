@@ -145,7 +145,7 @@ npm install
 
 Create `.env` file:
 ```env
-VITE_API_BASE_URL=http://localhost:4000
+VITE_API_BASE_URL=https://tryon-d5zv.onrender.com
 VITE_GOOGLE_MAPS_API_KEY=your-google-maps-api-key
 ```
 
@@ -158,7 +158,7 @@ npm run dev
 
 After adding products, generate embeddings:
 ```bash
-curl -X POST http://localhost:4000/api/recommendations/generate-embeddings
+curl -X POST https://tryon-d5zv.onrender.com/api/recommendations/generate-embeddings
 ```
 
 ## 📦 Key Dependencies

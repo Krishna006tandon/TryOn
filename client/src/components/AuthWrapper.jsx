@@ -34,7 +34,7 @@ import UserOrders from '../pages/Orders.jsx'; // Import User Orders component
 import { fetchHeroSlides } from '../data/content.js';
 import '../i18n/config.js'; // Import i18n configuration
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:4000/api';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://tryon-d5zv.onrender.com/api';
 
 const AuthWrapper = () => {
     const { user, loading } = useAuth();
