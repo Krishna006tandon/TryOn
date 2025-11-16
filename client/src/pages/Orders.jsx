@@ -39,6 +39,27 @@ const Orders = () => {
     setSelectedOrder(null);
   };
 
+  // Function to handle order cancellation
+  const handleCancelOrder = async (orderId) => {
+    const confirmCancel = window.confirm("Confirmation!\nDo you really want to cancel this order?");
+    if (!confirmCancel) return;
+
+    try {
+      await api.put(`/cancel-order/${orderId}`); // Your API endpoint
+      alert("Order cancelled!");
+
+      // Update local list showing cancelled status
+      setOrders((prev) =>
+        prev.map((o) =>
+          o.orderId === orderId ? { ...o, status: "cancelled" } : o
+        )
+      );
+    } catch (error) {
+      console.error("Cancel order error:", error);
+      alert("Error cancelling order. Please try again.");
+    }
+  };
+
   if (loading) {
     return <div className="orders-loading">Loading orders...</div>;
   }
@@ -78,6 +99,7 @@ const Orders = () => {
                     <div className="more-images">+{order.productImages.length - 3}</div>
                   )}
                 </div>
+
                 <div className="order-details">
                   <div className="order-header">
                     <h3>
@@ -87,20 +109,34 @@ const Orders = () => {
                       {order.status}
                     </span>
                   </div>
+
                   <p className="order-date">
                     {new Date(order.orderDate).toLocaleString()}
                   </p>
-                  <p className="order-total">Total: ₹{order.total?.toLocaleString('en-IN') || '0'}</p>
+
+                  <p className="order-total">
+                    Total: ₹{order.total?.toLocaleString('en-IN') || '0'}
+                  </p>
+
+                  {/* COD Text */}
+                  <p className="purchase-mode">Purchase: Cash on Delivery</p>
+
+                  {/* Cancel Button - THE FIX IS HERE */}
                   {order.status !== 'cancelled' && order.status !== 'delivered' && (
                     <button
                       className="cancel-order-btn"
                       onClick={(e) => {
-                        e.stopPropagation();
-                        // Cancel order will be handled in OrderTracking
+                        e.stopPropagation(); // Prevents card tracking view from opening
+                        handleCancelOrder(order.orderId);
                       }}
                     >
                       Cancel Order
                     </button>
+                  )}
+
+                  {/* Show "Order cancelled!" text */}
+                  {order.status === 'cancelled' && (
+                    <p className="cancelled-text">Order cancelled!</p>
                   )}
                 </div>
               </div>
@@ -113,4 +149,3 @@ const Orders = () => {
 };
 
 export default Orders;
-

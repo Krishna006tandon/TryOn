@@ -65,16 +65,7 @@ const Dashboard = () => {
       transition={{ duration: 0.5 }}
       className="space-y-6"
     >
-      {error && (
-        <Card className="bg-destructive/10 border-destructive/50">
-          <CardHeader>
-            <CardTitle className="text-destructive">Warning: {error}</CardTitle>
-            <CardDescription className="text-destructive/80">
-              Showing fallback data. Please check your backend connection.
-            </CardDescription>
-          </CardHeader>
-        </Card>
-      )}
+      
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <StatCard
