@@ -4,7 +4,6 @@ import { useAuth } from '../contexts/AuthContext'; // Import useAuth
 import VisualSearch from './VisualSearch.jsx';
 import VoiceSearch from './VoiceSearch.jsx';
 import LanguageSwitcher from './LanguageSwitcher.jsx';
-import { useState } from 'react';
 import Drawer from './Drawer.jsx';
 import './Navbar.css';
 
