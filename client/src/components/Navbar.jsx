@@ -1,13 +1,12 @@
 import { useState, useRef, useEffect } from 'react';
 import { LayoutGroup, motion, AnimatePresence } from 'framer-motion';
-import { Link, useNavigate, useLocation } from 'react-router-dom'; // Import Link and useNavigate
-import { useAuth } from '../contexts/AuthContext'; // Import useAuth
+import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 import VisualSearch from './VisualSearch.jsx';
 import VoiceSearch from './VoiceSearch.jsx';
 import LanguageSwitcher from './LanguageSwitcher.jsx';
 import ProfileDropdown from './ProfileDropdown.jsx';
-import TryOnLogo from '../images/TryOn.png';
-
+import TryOnLogo from '../images/TryOn.png'; // Note: Not used, but kept import
 import Drawer from './Drawer.jsx';
 import './Navbar.css';
 
@@ -30,7 +29,7 @@ const searchSuggestions = [
 ];
 
 const Navbar = ({ onShopClick = () => {}, cartCount = 0, onCartClick = () => {} }) => {
-  const { user, logout } = useAuth(); // Use useAuth hook
+  const { user, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [searchValue, setSearchValue] = useState('');
@@ -180,37 +179,24 @@ const Navbar = ({ onShopClick = () => {}, cartCount = 0, onCartClick = () => {} 
                 )}
                 <motion.div
                   ref={searchActionsRef}
-                  className="search-actions"
+                  className="search-actions-dropdown" // Renamed to avoid confusion with parent nav-actions
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
                   transition={{ duration: 0.2 }}
                 >
-                  <VisualSearch />
-                  <VoiceSearch />
                 </motion.div>
               </>
             )}
           </AnimatePresence>
         </form>
+        
+        {/* --- CORRECTED AUTH/ACTIONS BLOCK STARTS HERE --- */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <LanguageSwitcher />
-          {user ? ( // Conditionally render Profile icon and Logout button
 
-        <div className="search">
-          <input placeholder="Search curated looks" />
-        </div>
-        <div className="visual-search">
-          <VisualSearch />
-        </div>
-        <div className="voice-search">
-          <VoiceSearch />
-        </div>
-        <div className="language-switcher">
-          <LanguageSwitcher />
-        </div>
-        <div className="nav-auth-buttons" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          {user ? ( // Conditionally render Profile link and Logout button
+          {/* Authentication and Profile actions */}
+          {user ? (
             <>
               <button
                 className="profile-icon-btn"
@@ -222,32 +208,45 @@ const Navbar = ({ onShopClick = () => {}, cartCount = 0, onCartClick = () => {} 
                   <circle cx="12" cy="7" r="4" />
                 </svg>
               </button>
-              <button onClick={logout} className="px-3 py-1 text-sm border rounded hover:bg-gray-100 transition-colors">
+              <button 
+                onClick={logout} 
+                className="px-3 py-1 text-sm border rounded hover:bg-gray-100 transition-colors"
+                style={{ color: 'white', border: '1px solid white' }} // Added inline style for visibility in dark mode
+              >
                 Logout
               </button>
             </>
           ) : (
-            <Link to="/login" className="px-3 py-1 text-sm border rounded hover:bg-gray-100 transition-colors">
+            <Link 
+              to="/login" 
+              className="px-3 py-1 text-sm border rounded hover:bg-gray-100 transition-colors"
+              style={{ color: 'white', border: '1px solid white', textDecoration: 'none' }} // Added inline style for visibility
+            >
               Login
             </Link>
           )}
+
+          {user && (
+            <ProfileDropdown
+              isOpen={showProfileDropdown}
+              onClose={() => setShowProfileDropdown(false)}
+            />
+          )}
+
+          <motion.button className="nav-cart" whileTap={{ scale: 0.9 }} onClick={onCartClick}>
+            Cart
+            <motion.span
+              className="cart-badge"
+              animate={{ scale: [1, 1.2, 1], opacity: [0.7, 1, 0.7] }}
+              transition={{ repeat: Infinity, duration: 2 }}
+            >
+              {cartCount}
+            </motion.span>
+          </motion.button>
+
         </div>
-        {user && (
-          <ProfileDropdown
-            isOpen={showProfileDropdown}
-            onClose={() => setShowProfileDropdown(false)}
-          />
-        )}
-        <motion.button className="nav-cart" whileTap={{ scale: 0.9 }} onClick={onCartClick}>
-          Cart
-          <motion.span
-            className="cart-badge"
-            animate={{ scale: [1, 1.2, 1], opacity: [0.7, 1, 0.7] }}
-            transition={{ repeat: Infinity, duration: 2 }}
-          >
-            {cartCount}
-          </motion.span>
-        </motion.button>
+        {/* --- CORRECTED AUTH/ACTIONS BLOCK ENDS HERE --- */}
+        
       </div>
       <Drawer open={drawerOpen} onClose={closeDrawer}>
         <nav style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
@@ -260,7 +259,7 @@ const Navbar = ({ onShopClick = () => {}, cartCount = 0, onCartClick = () => {} 
           {user ? (
             <>
               <Link to="/profile" onClick={closeDrawer} style={{ display: 'block', color: '#fff', marginBottom: 8 }}>Profile</Link>
-              <button onClick={() => { logout(); closeDrawer(); }} style={{ display: 'block', color: '#fff' }}>Logout</button>
+              <button onClick={() => { logout(); closeDrawer(); }} style={{ display: 'block', color: '#fff', background: 'none', border: 'none', padding: 0, cursor: 'pointer', textAlign: 'left' }}>Logout</button>
             </>
           ) : (
             <Link to="/login" onClick={closeDrawer} style={{ display: 'block', color: '#fff' }}>Login</Link>
@@ -272,4 +271,3 @@ const Navbar = ({ onShopClick = () => {}, cartCount = 0, onCartClick = () => {} 
 };
 
 export default Navbar;
-

@@ -143,9 +143,9 @@ app.get('/api/health', (_req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
-// app.listen(port, () => {
-//   console.log(`Server ready on http://localhost:${port}`);
-// });
+app.listen(port, () => {
+  console.log(`Server ready on http://localhost:${port}`);
+});
 
 export default app;
 
