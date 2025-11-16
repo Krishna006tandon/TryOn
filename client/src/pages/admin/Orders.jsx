@@ -1,28 +1,25 @@
 import { useState, useEffect } from 'react';
 import api from '../../utils/api';
-import { motion } from 'framer-motion';
-import Skeleton from '../../components/admin/Skeleton';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Card, CardHeader, CardTitle, CardContent } from '../../components/ui/card';
 import { Button } from '../../components/ui/button';
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '../../components/ui/select';
-import { ShoppingCart, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ShoppingCart, ChevronDown, ChevronRight, Package, Truck, CheckCircle } from 'lucide-react';
 
 const OrdersPage = () => {
-  const [orders, setOrders] = useState([]);
+  const [usersWithOrders, setUsersWithOrders] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
+  const [expandedUsers, setExpandedUsers] = useState(new Set());
+  const [expandedOrders, setExpandedOrders] = useState(new Set());
 
   useEffect(() => {
-    fetchOrders();
-  }, [page]);
+    fetchOrdersByUsers();
+  }, []);
 
-  const fetchOrders = async () => {
+  const fetchOrdersByUsers = async () => {
     try {
       setLoading(true);
-      const response = await api.get(`/api/admin/orders?page=${page}&limit=10`);
-      setOrders(response.data.orders);
-      setTotalPages(response.data.pagination.totalPages);
+      const response = await api.get('/admin/orders/by-users');
+      setUsersWithOrders(response.data.users || []);
     } catch (error) {
       console.error('Error fetching orders:', error);
     } finally {
@@ -30,23 +27,47 @@ const OrdersPage = () => {
     }
   };
 
-  const handleStatusChange = async (orderId, status) => {
+  const toggleUser = (userId) => {
+    setExpandedUsers((prev) => {
+      const newSet = new Set(prev);
+      if (newSet.has(userId)) {
+        newSet.delete(userId);
+      } else {
+        newSet.add(userId);
+      }
+      return newSet;
+    });
+  };
+
+  const toggleOrder = (orderId) => {
+    setExpandedOrders((prev) => {
+      const newSet = new Set(prev);
+      if (newSet.has(orderId)) {
+        newSet.delete(orderId);
+      } else {
+        newSet.add(orderId);
+      }
+      return newSet;
+    });
+  };
+
+  const handleStatusUpdate = async (orderId, productId, status) => {
     try {
-      await api.patch(`/api/admin/orders/${orderId}/status`, { status });
-      fetchOrders();
+      await api.patch(`/admin/orders/${orderId}/products/${productId}/status`, { status });
+      // Refresh data
+      fetchOrdersByUsers();
     } catch (error) {
-      console.error('Error updating order status:', error);
+      console.error('Error updating product status:', error);
+      alert('Failed to update product status. Please try again.');
     }
   };
 
   const getStatusBadgeClass = (status) => {
     switch (status) {
-      case 'pending':
-        return 'bg-yellow-500/20 text-yellow-500';
-      case 'confirmed':
+      case 'ordered':
+        return 'bg-gray-500/20 text-gray-500';
+      case 'packed':
         return 'bg-blue-500/20 text-blue-500';
-      case 'processing':
-        return 'bg-purple-500/20 text-purple-500';
       case 'shipped':
         return 'bg-indigo-500/20 text-indigo-500';
       case 'delivered':
@@ -57,6 +78,29 @@ const OrdersPage = () => {
         return 'bg-muted-foreground/20 text-muted-foreground';
     }
   };
+
+  const getStatusIcon = (status) => {
+    switch (status) {
+      case 'packed':
+        return <Package className="h-4 w-4" />;
+      case 'shipped':
+        return <Truck className="h-4 w-4" />;
+      case 'delivered':
+        return <CheckCircle className="h-4 w-4" />;
+      default:
+        return null;
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="space-y-4">
+        {[...Array(5)].map((_, i) => (
+          <div key={i} className="h-20 bg-muted animate-pulse rounded-lg" />
+        ))}
+      </div>
+    );
+  }
 
   return (
     <motion.div
@@ -70,99 +114,206 @@ const OrdersPage = () => {
           <CardTitle className="text-2xl font-bold">Manage Orders</CardTitle>
         </CardHeader>
         <CardContent>
-          {loading ? (
-            <div className="space-y-4">
-              {[...Array(5)].map((_, i) => (
-                <div key={i} className="flex items-center space-x-4 p-4 border rounded-lg">
-                  <div className="flex-1 space-y-2">
-                    <Skeleton className="h-4 w-1/4" />
-                    <Skeleton className="h-4 w-1/2" />
-                  </div>
-                  <Skeleton className="h-8 w-24" />
-                </div>
-              ))}
-            </div>
-          ) : orders.length === 0 ? (
+          {usersWithOrders.length === 0 ? (
             <div className="text-center py-8 text-muted-foreground">
               <ShoppingCart className="w-16 h-16 mx-auto mb-4" />
               <h3 className="mt-4 text-lg font-medium">No orders found</h3>
               <p className="mt-1 text-sm">New orders will appear here.</p>
             </div>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm text-left rtl:text-right text-muted-foreground">
-                <thead className="text-xs uppercase bg-muted">
-                  <tr>
-                    <th scope="col" className="px-6 py-3">Order ID</th>
-                    <th scope="col" className="px-6 py-3">Customer</th>
-                    <th scope="col" className="px-6 py-3">Date</th>
-                    <th scope="col" className="px-6 py-3">Total</th>
-                    <th scope="col" className="px-6 py-3">Status</th>
-                    <th scope="col" className="px-6 py-3">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {orders.map((order) => (
-                    <motion.tr
-                      key={order._id}
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      className="border-b hover:bg-muted"
-                    >
-                      <td className="px-6 py-4 font-medium text-foreground">{order.orderNumber}</td>
-                      <td className="px-6 py-4">{order.userId?.name || 'Guest'}</td>
-                      <td className="px-6 py-4">{new Date(order.createdAt).toLocaleDateString()}</td>
-                      <td className="px-6 py-4 text-foreground">${order.total.toFixed(2)}</td>
-                      <td className="px-6 py-4">
-                        <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusBadgeClass(order.status)}`}>
-                          {order.status}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4">
-                        <Select onValueChange={(value) => handleStatusChange(order._id, value)} value={order.status}>
-                          <SelectTrigger className="w-[180px]">
-                            <SelectValue placeholder="Update Status" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="pending">Pending</SelectItem>
-                            <SelectItem value="confirmed">Confirmed</SelectItem>
-                            <SelectItem value="processing">Processing</SelectItem>
-                            <SelectItem value="shipped">Shipped</SelectItem>
-                            <SelectItem value="delivered">Delivered</SelectItem>
-                            <SelectItem value="cancelled">Cancelled</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </td>
-                    </motion.tr>
-                  ))}
-                </tbody>
-              </table>
+            <div className="space-y-4">
+              {usersWithOrders.map((user) => (
+                <div key={user.userId} className="border rounded-lg overflow-hidden">
+                  {/* User Header */}
+                  <div
+                    className="p-4 bg-muted/50 cursor-pointer hover:bg-muted transition-colors"
+                    onClick={() => toggleUser(user.userId.toString())}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        {expandedUsers.has(user.userId.toString()) ? (
+                          <ChevronDown className="h-5 w-5" />
+                        ) : (
+                          <ChevronRight className="h-5 w-5" />
+                        )}
+                        <div>
+                          <h3 className="font-semibold text-foreground">{user.userName}</h3>
+                          <p className="text-sm text-muted-foreground">{user.userEmail}</p>
+                        </div>
+                      </div>
+                      <span className="text-sm text-muted-foreground">
+                        {user.orders.length} order(s)
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Orders List */}
+                  <AnimatePresence>
+                    {expandedUsers.has(user.userId.toString()) && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.2 }}
+                        className="overflow-hidden"
+                      >
+                        <div className="p-4 space-y-3">
+                          {user.orders.map((order) => (
+                            <div key={order.orderId} className="border rounded-lg overflow-hidden">
+                              {/* Order Header */}
+                              <div
+                                className="p-3 bg-card cursor-pointer hover:bg-muted/50 transition-colors"
+                                onClick={() => toggleOrder(order.orderId.toString())}
+                              >
+                                <div className="flex items-center justify-between">
+                                  <div className="flex items-center gap-3">
+                                    {expandedOrders.has(order.orderId.toString()) ? (
+                                      <ChevronDown className="h-4 w-4" />
+                                    ) : (
+                                      <ChevronRight className="h-4 w-4" />
+                                    )}
+                                    <div>
+                                      <p className="font-medium text-foreground">
+                                        Order #{order.orderNumber}
+                                      </p>
+                                      <p className="text-xs text-muted-foreground">
+                                        {new Date(order.orderDate).toLocaleDateString()} • Total: ₹
+                                        {order.total.toLocaleString('en-IN')}
+                                      </p>
+                                    </div>
+                                  </div>
+                                  <span
+                                    className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusBadgeClass(
+                                      order.status
+                                    )}`}
+                                  >
+                                    {order.status}
+                                  </span>
+                                </div>
+                              </div>
+
+                              {/* Products List */}
+                              <AnimatePresence>
+                                {expandedOrders.has(order.orderId.toString()) && (
+                                  <motion.div
+                                    initial={{ height: 0, opacity: 0 }}
+                                    animate={{ height: 'auto', opacity: 1 }}
+                                    exit={{ height: 0, opacity: 0 }}
+                                    transition={{ duration: 0.2 }}
+                                    className="overflow-hidden"
+                                  >
+                                    <div className="p-4 space-y-4 border-t">
+                                      {order.items.map((item, idx) => (
+                                        <div
+                                          key={idx}
+                                          className="p-4 border rounded-lg bg-muted/30"
+                                        >
+                                          <div className="flex items-start justify-between mb-3">
+                                            <div className="flex-1">
+                                              <h4 className="font-semibold text-foreground mb-1">
+                                                {item.name}
+                                              </h4>
+                                              {item.description && (
+                                                <p className="text-sm text-muted-foreground mb-2">
+                                                  {item.description}
+                                                </p>
+                                              )}
+                                              <div className="flex items-center gap-4 text-sm">
+                                                <span className="text-foreground">
+                                                  Price: ₹{item.price.toLocaleString('en-IN')}
+                                                </span>
+                                                <span className="text-muted-foreground">
+                                                  Qty: {item.quantity}
+                                                </span>
+                                              </div>
+                                            </div>
+                                            <span
+                                              className={`px-2 py-1 rounded-full text-xs font-medium flex items-center gap-1 ${getStatusBadgeClass(
+                                                item.status
+                                              )}`}
+                                            >
+                                              {getStatusIcon(item.status)}
+                                              {item.status}
+                                            </span>
+                                          </div>
+
+                                          {/* Status Buttons */}
+                                          <div className="flex gap-2 mt-3">
+                                            {item.status === 'ordered' && (
+                                              <Button
+                                                size="sm"
+                                                variant="outline"
+                                                onClick={() =>
+                                                  handleStatusUpdate(
+                                                    order.orderId,
+                                                    item.productId,
+                                                    'packed'
+                                                  )
+                                                }
+                                                className="flex items-center gap-2"
+                                              >
+                                                <Package className="h-4 w-4" />
+                                                Pack
+                                              </Button>
+                                            )}
+                                            {item.status === 'packed' && (
+                                              <Button
+                                                size="sm"
+                                                variant="outline"
+                                                onClick={() =>
+                                                  handleStatusUpdate(
+                                                    order.orderId,
+                                                    item.productId,
+                                                    'shipped'
+                                                  )
+                                                }
+                                                className="flex items-center gap-2"
+                                              >
+                                                <Truck className="h-4 w-4" />
+                                                Ship
+                                              </Button>
+                                            )}
+                                            {item.status === 'shipped' && (
+                                              <Button
+                                                size="sm"
+                                                variant="outline"
+                                                onClick={() =>
+                                                  handleStatusUpdate(
+                                                    order.orderId,
+                                                    item.productId,
+                                                    'delivered'
+                                                  )
+                                                }
+                                                className="flex items-center gap-2"
+                                              >
+                                                <CheckCircle className="h-4 w-4" />
+                                                Deliver
+                                              </Button>
+                                            )}
+                                            {item.status === 'delivered' && (
+                                              <span className="text-sm text-emerald-500 font-medium">
+                                                ✓ Delivered
+                                              </span>
+                                            )}
+                                          </div>
+                                        </div>
+                                      ))}
+                                    </div>
+                                  </motion.div>
+                                )}
+                              </AnimatePresence>
+                            </div>
+                          ))}
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              ))}
             </div>
           )}
         </CardContent>
       </Card>
-
-      {totalPages > 1 && (
-        <div className="flex justify-end items-center space-x-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setPage(p => Math.max(1, p - 1))}
-            disabled={page === 1}
-          >
-            <ChevronLeft className="h-4 w-4" /> Previous
-          </Button>
-          <span className="text-sm text-muted-foreground">Page {page} of {totalPages}</span>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setPage(p => Math.min(totalPages, p + 1))}
-            disabled={page === totalPages}
-          >
-            Next <ChevronRight className="h-4 w-4" />
-          </Button>
-        </div>
-      )}
     </motion.div>
   );
 };

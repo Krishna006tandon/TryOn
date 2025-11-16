@@ -1,6 +1,74 @@
 import Order from '../models/Order.js';
 import User from '../models/User.js';
 import Product from '../models/Product.js';
+import DeliveryTracking from '../models/DeliveryTracking.js';
+
+// Get all orders grouped by users
+export const getOrdersByUsers = async (req, res) => {
+  try {
+    const orders = await Order.find({})
+      .populate('userId', 'name email phone')
+      .populate('items.productId', 'name description price')
+      .sort({ createdAt: -1 });
+
+    // Group orders by user
+    const usersMap = new Map();
+    
+    for (const order of orders) {
+      if (!order.userId) continue;
+      
+      const userId = order.userId._id.toString();
+      
+      if (!usersMap.has(userId)) {
+        usersMap.set(userId, {
+          userId: order.userId._id,
+          userName: order.userId.name,
+          userEmail: order.userId.email,
+          userPhone: order.userId.phone,
+          orders: [],
+        });
+      }
+      
+      // Get delivery tracking for each product in the order
+      const orderWithTracking = {
+        orderId: order._id,
+        orderNumber: order.orderNumber,
+        orderDate: order.createdAt,
+        total: order.total,
+        status: order.status,
+        items: await Promise.all(
+          order.items.map(async (item) => {
+            const productId = item.productId?._id || item.productId;
+            const tracking = await DeliveryTracking.findOne({
+              userId: order.userId._id,
+              orderId: order._id,
+              productId: productId,
+            });
+            
+            return {
+              productId: productId,
+              name: item.name || item.productId?.name || 'Unknown Product',
+              description: item.productId?.description || '',
+              price: item.price,
+              quantity: item.quantity,
+              status: tracking?.status || 'ordered',
+              trackingId: tracking?._id,
+            };
+          })
+        ),
+      };
+      
+      usersMap.get(userId).orders.push(orderWithTracking);
+    }
+    
+    const usersWithOrders = Array.from(usersMap.values());
+    
+    res.json({ users: usersWithOrders });
+  } catch (error) {
+    console.error('Error fetching orders by users:', error);
+    res.status(500).json({ message: error.message });
+  }
+};
 
 // Get all orders with pagination, search, and filters
 export const getAllOrders = async (req, res) => {
@@ -79,6 +147,72 @@ export const getOrderById = async (req, res) => {
     }
     res.json(order);
   } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Update product delivery status (Pack, Ship, Deliver)
+export const updateProductDeliveryStatus = async (req, res) => {
+  try {
+    const { orderId, productId } = req.params;
+    const { status } = req.body;
+
+    const validStatuses = ['packed', 'shipped', 'delivered'];
+    if (!validStatuses.includes(status)) {
+      return res.status(400).json({ message: 'Invalid status. Must be: packed, shipped, or delivered' });
+    }
+
+    // Get order to find userId
+    const order = await Order.findById(orderId);
+    if (!order) {
+      return res.status(404).json({ message: 'Order not found' });
+    }
+
+    // Find or create delivery tracking for this product
+    let tracking = await DeliveryTracking.findOne({
+      userId: order.userId,
+      orderId: order._id,
+      productId: productId,
+    });
+
+    if (!tracking) {
+      // Create new tracking entry
+      tracking = new DeliveryTracking({
+        userId: order.userId,
+        orderId: order._id,
+        productId: productId,
+        status: 'ordered',
+        logs: [
+          {
+            status: 'ordered',
+            description: 'Order placed',
+            timestamp: new Date(),
+          },
+        ],
+      });
+    }
+
+    // Update status
+    tracking.status = status;
+    tracking.logs.push({
+      status: status,
+      description: `Product ${status}`,
+      timestamp: new Date(),
+    });
+
+    // Set delivery date if delivered
+    if (status === 'delivered') {
+      tracking.actualDelivery = new Date();
+    }
+
+    await tracking.save();
+
+    res.json({
+      message: `Product status updated to ${status}`,
+      tracking,
+    });
+  } catch (error) {
+    console.error('Error updating product delivery status:', error);
     res.status(500).json({ message: error.message });
   }
 };
@@ -178,5 +312,3 @@ export const getOrderStats = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
-
-
