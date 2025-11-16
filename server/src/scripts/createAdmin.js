@@ -36,29 +36,33 @@ const createAdmin = async () => {
       existingAdmin.isAdmin = true;
       existingAdmin.isBlocked = false;
       existingAdmin.isActive = true;
+      existingAdmin.role = 'admin';
+      existingAdmin.verified = true;
       
-      // Hash password if provided
+      // Set password (will be hashed by pre-save hook)
+      // Use set() to ensure mongoose detects the change
       if (adminPassword) {
-        const salt = await bcrypt.genSalt(10);
-        existingAdmin.password = await bcrypt.hash(adminPassword, salt);
+        existingAdmin.set('password', adminPassword);
       }
       
       await existingAdmin.save();
       console.log('✅ Admin user updated successfully!');
       console.log(`📧 Email: ${adminEmail}`);
       console.log(`🔑 Password: ${adminPassword}`);
+      console.log(`✅ isAdmin: ${existingAdmin.isAdmin}`);
+      console.log(`✅ isActive: ${existingAdmin.isActive}`);
+      console.log(`✅ isBlocked: ${existingAdmin.isBlocked}`);
     } else {
-      // Create new admin
-      const salt = await bcrypt.genSalt(10);
-      const hashedPassword = await bcrypt.hash(adminPassword, salt);
-
+      // Create new admin (password will be hashed by pre-save hook)
       const admin = new User({
         name: adminName,
         email: adminEmail,
-        password: hashedPassword,
+        password: adminPassword, // Will be hashed by pre-save hook
+        role: 'admin',
         isAdmin: true,
         isBlocked: false,
         isActive: true,
+        verified: true,
       });
 
       await admin.save();

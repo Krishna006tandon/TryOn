@@ -26,8 +26,8 @@ const deliveryTrackingSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ['picked_up', 'in_transit', 'out_for_delivery', 'delivered', 'exception'],
-      default: 'picked_up',
+      enum: ['ordered', 'packed', 'shipped', 'out_for_delivery', 'delivered', 'cancelled'],
+      default: 'ordered',
       index: true,
     },
     logs: [

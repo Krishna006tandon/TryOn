@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import AuthModal from './AuthModal';
+import api from '../utils/api';
 
 // Import all components that were previously in App.jsx's Routes
 import Navbar from './Navbar.jsx';
@@ -10,8 +11,10 @@ import CartDrawer from './CartDrawer.jsx';
 import QuickViewModal from './QuickViewModal.jsx';
 import AuraBackground from './AuraBackground.jsx';
 import Chatbot from './Chatbot.jsx';
+import ThemeToggle from './ThemeToggle.jsx';
 import Home from '../pages/Home.jsx';
 import ProductDetails from '../pages/ProductDetails.jsx';
+import SearchResults from '../pages/SearchResults.jsx';
 import AdminLayout from '../pages/admin/AdminLayout.jsx';
 import AdminLogin from '../pages/admin/Login.jsx'; // Renamed to avoid conflict
 import Dashboard from '../pages/admin/Dashboard.jsx';
@@ -26,8 +29,9 @@ import Signup from '../pages/Signup.jsx';
 import OtpVerify from '../pages/OtpVerify.jsx';
 import UserLogin from '../pages/Login.jsx'; // Renamed to avoid conflict
 import Profile from '../pages/Profile.jsx'; // Import Profile component
+import UserOrders from '../pages/Orders.jsx'; // Import User Orders component
 
-import { fetchHeroSlides, fetchFeaturedProducts, fetchTrendingOutfits } from '../data/content.js';
+import { fetchHeroSlides } from '../data/content.js';
 import '../i18n/config.js'; // Import i18n configuration
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:4000/api';
@@ -39,16 +43,52 @@ const AuthWrapper = () => {
     const location = useLocation();
 
     const [heroSlides, setHeroSlides] = useState([]);
-    const [featuredProducts, setFeaturedProducts] = useState([]);
-    const [trendingOutfits, setTrendingOutfits] = useState([]);
     const [isHydrated, setIsHydrated] = useState(false);
     const [cartItems, setCartItems] = useState([]);
     const [isCartOpen, setIsCartOpen] = useState(false);
     const [quickViewProduct, setQuickViewProduct] = useState(null);
 
+    // Load cart from database when user logs in
+    const fetchCartFromDatabase = useCallback(async () => {
+        if (!user) return;
+        try {
+            const response = await api.get(`/user-details/${user.id}`);
+            if (response.data?.cart) {
+                // Convert cart items from database format to component format
+                const cartItemsFromDB = response.data.cart.map(item => ({
+                    id: item.productId,
+                    name: item.productName,
+                    price: item.price,
+                    image: item.productImage,
+                    primary: item.productImage,
+                    quantity: item.quantity || 1,
+                }));
+                setCartItems(cartItemsFromDB);
+            }
+        } catch (error) {
+            console.error('Error fetching cart from database:', error);
+        }
+    }, [user]);
+
     useEffect(() => {
-        // Only show modal if not loading, no user, and on the home page
-        if (!loading && !user && location.pathname === '/') {
+        if (user) {
+            fetchCartFromDatabase();
+        } else {
+            setCartItems([]);
+        }
+    }, [user, fetchCartFromDatabase]);
+
+    useEffect(() => {
+        // Don't show modal if:
+        // 1. Still loading
+        // 2. User is already logged in
+        // 3. Not on home page
+        // 4. On admin routes
+        // 5. On login/signup routes
+        const isAdminRoute = location.pathname.startsWith('/admin');
+        const isAuthRoute = location.pathname === '/login' || location.pathname === '/signup' || location.pathname === '/verify-otp';
+        
+        if (!loading && !user && location.pathname === '/' && !isAdminRoute && !isAuthRoute) {
             setShowAuthModal(true);
         } else {
             setShowAuthModal(false);
@@ -59,34 +99,10 @@ const AuthWrapper = () => {
         let active = true;
 
         const loadContent = async () => {
-            try {
-                const endpoints = ['hero', 'featured', 'trending'];
-                const [hero, featured, trending] = await Promise.all(
-                    endpoints.map(async (endpoint) => {
-                        const response = await fetch(`${API_BASE_URL}/${endpoint}`); // Adjusted API_BASE_URL usage
-                        if (!response.ok) {
-                            throw new Error(`Failed to load ${endpoint}`);
-                        }
-                        return response.json();
-                    }),
-                );
-
-                if (active) {
-                    setHeroSlides(hero);
-                    setFeaturedProducts(featured);
-                    setTrendingOutfits(trending);
-                }
-            } catch (error) {
-                console.warn('Falling back to local seed content', error);
-                if (active) {
-                    setHeroSlides(fetchHeroSlides());
-                    setFeaturedProducts(fetchFeaturedProducts());
-                    setTrendingOutfits(fetchTrendingOutfits());
-                }
-            } finally {
-                if (active) {
-                    setIsHydrated(true);
-                }
+            // Use local content directly to ensure images and text are correct
+            if (active) {
+                setHeroSlides(fetchHeroSlides());
+                setIsHydrated(true);
             }
         };
 
@@ -109,23 +125,83 @@ const AuthWrapper = () => {
         window.scrollTo({ top: 0, behavior: 'auto' });
     }, [location.pathname]);
 
-    const handleAddToCart = useCallback((product) => {
-        setCartItems((prev) => [...prev, product]);
+    const handleAddToCart = useCallback(async (product) => {
+        if (!user) {
+            navigate('/login');
+            return;
+        }
+
+        // Update local state immediately for better UX
+        setCartItems((prev) => {
+            // Check if product already exists in cart
+            const exists = prev.find(item => item.id === product.id);
+            if (exists) {
+                return prev; // Don't add duplicates
+            }
+            return [...prev, product];
+        });
         setIsCartOpen(true);
-    }, []);
+
+        // Save to database
+        try {
+            await api.post(`/user-details/${user.id}/cart`, {
+                productId: product.id,
+                productImage: product.image || product.primary,
+                productName: product.name || product.title,
+                price: product.price,
+                quantity: 1,
+            });
+        } catch (error) {
+            console.error('Error adding to cart:', error);
+            // Revert local state on error
+            setCartItems((prev) => prev.filter(item => item.id !== product.id));
+            alert('Failed to add item to cart. Please try again.');
+        }
+    }, [user, navigate]);
 
     const handleQuickView = useCallback((product) => {
         setQuickViewProduct(product);
-    }, []);
-
-    const handleRemoveFromCart = useCallback((id) => {
-        setCartItems((prev) => prev.filter((item, idx) => `${item.id}-${idx}` !== id));
     }, []);
 
     const cartItemsWithIds = useMemo(
         () => cartItems.map((item, idx) => ({ ...item, _instanceId: `${item.id}-${idx}` })),
         [cartItems],
     );
+
+    const handleRemoveFromCart = useCallback(async (id) => {
+        if (!user) return;
+        
+        // Extract productId from the id (format: "productId-index")
+        const productId = id.split('-').slice(0, -1).join('-');
+        
+        // Update local state immediately
+        setCartItems((prev) => prev.filter((item, idx) => `${item.id}-${idx}` !== id));
+
+        // Remove from database
+        try {
+            await api.delete(`/user-details/${user.id}/cart`, {
+                data: { productId },
+            });
+        } catch (error) {
+            console.error('Error removing from cart:', error);
+            // Reload cart from database on error
+            if (user) {
+                const response = await api.get(`/user-details/${user.id}`);
+                if (response.data?.cart) {
+                    const cartItemsFromDB = response.data.cart.map(item => ({
+                        id: item.productId,
+                        name: item.productName,
+                        price: item.price,
+                        image: item.productImage,
+                        primary: item.productImage,
+                        quantity: item.quantity || 1,
+                    }));
+                    setCartItems(cartItemsFromDB);
+                }
+            }
+            alert('Failed to remove item from cart. Please try again.');
+        }
+    }, [user]);
 
     const cartTotal = useMemo(() => {
         return cartItems.reduce((sum, item) => {
@@ -135,37 +211,15 @@ const AuthWrapper = () => {
     }, [cartItems]);
 
     const allProducts = useMemo(() => {
-        const normalizedFeatured = featuredProducts.map((product) => ({
-            ...product,
-            name: product.name,
-            title: product.name,
-            description:
-                product.description ||
-                'Precision-cut tailoring with performance stretch and seasonless texture.',
-        }));
-
-        const normalizedTrending = trendingOutfits.map((item, idx) => ({
-            ...item,
-            name: item.title,
-            id: item.id,
-            price: item.price || `$${230 + idx * 10}`,
-            primary: item.image,
-            alternate: item.image,
-            description: 'Curated look from the latest edit, styled with layered essentials.',
-        }));
-
-        return [...normalizedFeatured, ...normalizedTrending];
-    }, [featuredProducts, trendingOutfits]);
+        return [];
+    }, []);
 
     const categoryExplore = useCallback(
         (categoryId) => {
-            if (categoryId === 'kids') {
-                scrollToSection('#trending');
-                return;
-            }
-            scrollToSection('#featured');
+            // Navigate to category page
+            navigate(`/category/${categoryId}`);
         },
-        [scrollToSection],
+        [navigate],
     );
 
     const handleProductNavigate = useCallback(
@@ -204,6 +258,84 @@ const AuthWrapper = () => {
                 <Route path="/login" element={<UserLogin />} />
                 <Route path="/profile" element={<Profile />} />
                 <Route
+                    path="/orders"
+                    element={
+                        <>
+                            <AuraBackground />
+                            <Navbar
+                                onShopClick={() => navigate('/')}
+                                cartCount={cartItems.length}
+                                onCartClick={() => setIsCartOpen((prev) => !prev)}
+                            />
+                            <UserOrders />
+                            <Footer />
+                            <Chatbot userId={user?.id} />
+                            <ThemeToggle />
+                            <CartDrawer
+                                isOpen={isCartOpen}
+                                items={cartItemsWithIds}
+                                total={cartTotal}
+                                onClose={() => setIsCartOpen(false)}
+                                onRemoveItem={handleRemoveFromCart}
+                            />
+                        </>
+                    }
+                />
+                <Route
+                    path="/search/:query"
+                    element={
+                        <>
+                            <AuraBackground />
+                            <Navbar
+                                onShopClick={() => navigate('/')}
+                                cartCount={cartItems.length}
+                                onCartClick={() => setIsCartOpen((prev) => !prev)}
+                            />
+                            <SearchResults
+                                onAddToCart={handleAddToCart}
+                                onProductClick={handleProductNavigate}
+                            />
+                            <Footer />
+                            <Chatbot userId={user?.id} />
+                            <ThemeToggle />
+                            <CartDrawer
+                                isOpen={isCartOpen}
+                                items={cartItemsWithIds}
+                                total={cartTotal}
+                                onClose={() => setIsCartOpen(false)}
+                                onRemoveItem={handleRemoveFromCart}
+                            />
+                        </>
+                    }
+                />
+                <Route
+                    path="/category/:category"
+                    element={
+                        <>
+                            <AuraBackground />
+                            <Navbar
+                                onShopClick={() => navigate('/')}
+                                cartCount={cartItems.length}
+                                onCartClick={() => setIsCartOpen((prev) => !prev)}
+                            />
+                            <SearchResults
+                                onAddToCart={handleAddToCart}
+                                onProductClick={handleProductNavigate}
+                            />
+                            <Footer />
+                            <Chatbot userId={user?.id} />
+                            <ThemeToggle />
+                            <CartDrawer
+                                isOpen={isCartOpen}
+                                items={cartItemsWithIds}
+                                total={cartTotal}
+                                onClose={() => setIsCartOpen(false)}
+                                onRemoveItem={handleRemoveFromCart}
+                            />
+                        </>
+                    }
+                />
+                <Route
                     path="/"
                     element={
                         <>
@@ -215,19 +347,15 @@ const AuthWrapper = () => {
                             />
                             <Home
                                 heroSlides={heroSlides}
-                                featuredProducts={featuredProducts}
-                                trendingOutfits={trendingOutfits}
                                 isHydrated={isHydrated}
                                 scrollToSection={scrollToSection}
-                                onAddToCart={handleAddToCart}
-                                onQuickView={handleQuickView}
                                 onExploreCategory={categoryExplore}
                                 onProductClick={handleProductNavigate}
-                                onTrendingClick={handleProductNavigate}
                                 userId={user?.id} // Use user?.id
                             />
                             <Footer />
                             <Chatbot userId={user?.id} />
+                            <ThemeToggle />
                             <CartDrawer
                                 isOpen={isCartOpen}
                                 items={cartItemsWithIds}
@@ -264,6 +392,8 @@ const AuthWrapper = () => {
                                 onExploreMore={goToFeatured}
                             />
                             <Footer />
+                            <Chatbot userId={user?.id} />
+                            <ThemeToggle />
                             <CartDrawer
                                 isOpen={isCartOpen}
                                 items={cartItemsWithIds}

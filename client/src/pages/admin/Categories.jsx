@@ -12,14 +12,17 @@ import { FolderTree, Plus, Edit, Trash2 } from 'lucide-react';
 const AddEditCategoryModal = ({ isOpen, onClose, onSave, category }) => {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
+  const [isActive, setIsActive] = useState(true);
 
   useEffect(() => {
     if (category) {
       setName(category.name);
       setDescription(category.description || '');
+      setIsActive(category.isActive !== undefined ? category.isActive : true);
     } else {
       setName('');
       setDescription('');
+      setIsActive(true);
     }
   }, [category]);
 
@@ -27,7 +30,7 @@ const AddEditCategoryModal = ({ isOpen, onClose, onSave, category }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSave({ name, description });
+    onSave({ name, description, isActive });
   };
 
   return (
@@ -53,6 +56,18 @@ const AddEditCategoryModal = ({ isOpen, onClose, onSave, category }) => {
             value={description}
             onChange={(e) => setDescription(e.target.value)}
           />
+          <div className="flex items-center space-x-2">
+            <input
+              type="checkbox"
+              id="isActive"
+              checked={isActive}
+              onChange={(e) => setIsActive(e.target.checked)}
+              className="h-4 w-4 rounded border-gray-300"
+            />
+            <label htmlFor="isActive" className="text-sm font-medium">
+              Active (Products in this category will be visible)
+            </label>
+          </div>
           <DialogFooter>
             <Button type="button" variant="outline" onClick={onClose}>Cancel</Button>
             <Button type="submit">Save</Button>
@@ -76,10 +91,20 @@ const CategoriesPage = () => {
   const fetchCategories = async () => {
     try {
       setLoading(true);
-      const response = await api.get('/api/admin/categories');
-      setCategories(response.data);
+      const response = await api.get('/admin/categories');
+      if (response.data && Array.isArray(response.data)) {
+        setCategories(response.data);
+      } else {
+        console.error('Invalid response format:', response.data);
+        setCategories([]);
+      }
     } catch (error) {
       console.error('Error fetching categories:', error);
+      if (error.response?.status === 404) {
+        console.error('Categories endpoint not found. Check backend route configuration.');
+        console.error('Expected endpoint: /api/admin/categories');
+      }
+      setCategories([]);
     } finally {
       setLoading(false);
     }
@@ -88,22 +113,26 @@ const CategoriesPage = () => {
   const handleSaveCategory = async (categoryData) => {
     try {
       if (editingCategory) {
-        await api.put(`/api/admin/categories/${editingCategory._id}`, categoryData);
+        await api.put(`/admin/categories/${editingCategory._id}`, categoryData);
       } else {
-        await api.post('/api/admin/categories', categoryData);
+        await api.post('/admin/categories', categoryData);
       }
       setIsModalOpen(false);
       setEditingCategory(null);
       fetchCategories();
     } catch (error) {
       console.error('Error saving category:', error);
+      alert(error.response?.data?.message || 'Failed to save category.');
     }
   };
 
   const handleDeleteCategory = async (categoryId) => {
-    if (window.confirm('Are you sure you want to delete this category?')) {
+    if (window.confirm('Are you sure you want to delete this category? All products in this category will be hidden.')) {
       try {
-        await api.delete(`/api/admin/categories/${categoryId}`);
+        const response = await api.delete(`/admin/categories/${categoryId}`);
+        if (response.data?.hiddenProducts > 0) {
+          alert(`Category deleted. ${response.data.hiddenProducts} product(s) have been hidden.`);
+        }
         fetchCategories();
       } catch (error) {
         console.error('Error deleting category:', error);
@@ -169,7 +198,16 @@ const CategoriesPage = () => {
                   animate={{ opacity: 1, y: 0 }}
                   className="p-6 rounded-lg border bg-card shadow-sm"
                 >
-                  <h3 className="text-lg font-semibold text-foreground mb-2">{category.name}</h3>
+                  <div className="flex items-center justify-between mb-2">
+                    <h3 className="text-lg font-semibold text-foreground">{category.name}</h3>
+                    <span className={`px-2 py-1 text-xs rounded-full ${
+                      category.isActive !== false 
+                        ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' 
+                        : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
+                    }`}>
+                      {category.isActive !== false ? 'Active' : 'Inactive'}
+                    </span>
+                  </div>
                   <p className="text-sm text-muted-foreground mb-4">{category.description || 'No description'}</p>
                   <div className="flex gap-2">
                     <Button variant="outline" size="sm" onClick={() => openModalToEdit(category)}>

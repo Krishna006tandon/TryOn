@@ -27,6 +27,7 @@ import orderRoutes from './routes/orderRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
 import authRoutes from './routes/authRoutes.js';
 import userRoutes from './routes/userRoutes.js'; // Import userRoutes
+import userDetailsRoutes from './routes/userDetailsRoutes.js';
 
 const app = express();
 const port = process.env.PORT || 4000;
@@ -47,17 +48,38 @@ connectDB();
 const heroSlides = [
   {
     id: 1,
-    title: 'New Nordic Layers',
-    subtitle: 'Elevate everyday staples.',
-    cta: 'Shop Now',
-    image: 'photo-1475180098004-ca77a66827be',
+    title: 'Discover Your Style. Wear Your Confidence.',
+    subtitle: '',
+    cta: 'Shop Bestsellers',
+    image: '1.png',
   },
   {
     id: 2,
-    title: 'Soft Pastel Resort',
-    subtitle: 'Airy silhouettes arrive today.',
-    cta: 'Explore Collection',
-    image: 'photo-1487412720507-e7ab37603c6f',
+    title: 'Timeless Essentials for the Modern You.',
+    subtitle: '',
+    cta: 'Shop Bestsellers',
+    image: '2.png',
+  },
+  {
+    id: 3,
+    title: 'Be Bold. Be Stylish. Be You.',
+    subtitle: '',
+    cta: 'Shop Bestsellers',
+    image: '3.png',
+  },
+  {
+    id: 4,
+    title: 'Fresh Styles Just Dropped — Grab Yours Before They\'re Gone!',
+    subtitle: '',
+    cta: 'Shop Bestsellers',
+    image: '4.png',
+  },
+  {
+    id: 5,
+    title: 'Join Thousands Who Upgraded Their Wardrobe Today',
+    subtitle: '',
+    cta: 'Shop Bestsellers',
+    image: '5.png',
   },
 ];
 
@@ -70,8 +92,14 @@ const featured = heroSlides.map((slide, idx) => ({
   tag: 'New',
 }));
 
-const withImage = (path) =>
-  `https://images.unsplash.com/${path}?auto=format&fit=crop&w=1600&q=80`;
+const withImage = (path) => {
+  // If it's a local image (ends with .png), return the path to the client's public/images
+  if (path.endsWith('.png')) {
+    return `/src/images/${path}`;
+  }
+  // Otherwise, use Unsplash placeholder
+  return `https://images.unsplash.com/${path}?auto=format&fit=crop&w=1600&q=80`;
+};
 
 app.get('/api/hero', (_req, res) => {
   res.json(heroSlides.map((slide) => ({ ...slide, image: withImage(slide.image) })));
@@ -108,6 +136,7 @@ app.use('/api/orders', orderRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/user', userRoutes);
+app.use('/api/user-details', userDetailsRoutes);
 
 // Health check
 app.get('/api/health', (_req, res) => {

@@ -51,10 +51,12 @@ router.delete('/categories/:id', categoryController.deleteCategory);
 
 // Order Management
 router.get('/orders', orderController.getAllOrders);
+router.get('/orders/by-users', orderController.getOrdersByUsers);
 router.get('/orders/stats', orderController.getOrderStats);
 router.get('/orders/:id', orderController.getOrderById);
 router.patch('/orders/:id/status', orderController.updateOrderStatus);
 router.patch('/orders/:id/payment-status', orderController.updatePaymentStatus);
+router.patch('/orders/:orderId/products/:productId/status', orderController.updateProductDeliveryStatus);
 
 // Analytics
 router.get('/analytics/sales', analyticsController.getSalesAnalytics);

@@ -16,16 +16,16 @@ export const createDeliveryTracking = async (req, res) => {
       orderId,
       courierName: courierName || 'Standard Courier',
       trackingNumber: trackingNumber || `TRK${uuidv4().substring(0, 8).toUpperCase()}`,
-      status: 'picked_up',
+      status: 'ordered',
       logs: [
         {
-          status: 'picked_up',
+          status: 'ordered',
           location: {
             address: 'Warehouse',
             city: 'Mumbai',
             state: 'Maharashtra',
           },
-          description: 'Order picked up from warehouse',
+          description: 'Order placed',
         },
       ],
       estimatedDelivery: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000), // 3 days

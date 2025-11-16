@@ -1,5 +1,6 @@
 import express from 'express';
 import Product from '../models/Product.js';
+import Category from '../models/Category.js';
 
 const router = express.Router();
 
@@ -9,8 +10,28 @@ router.get('/', async (req, res) => {
     const { category, search, limit = 50, page = 1 } = req.query;
     const query = { isActive: true };
 
+    // Get all active category IDs
+    const activeCategories = await Category.find({ isActive: true }).select('_id');
+    const activeCategoryIds = activeCategories.map(cat => cat._id);
+    
+    // Only show products with active categories
+    query.category = { $in: activeCategoryIds };
+
     if (category) {
-      query.category = category;
+      // Validate that the requested category is active
+      const categoryDoc = await Category.findOne({ _id: category, isActive: true });
+      if (categoryDoc) {
+        query.category = category;
+      } else {
+        // Category doesn't exist or is inactive, return empty results
+        return res.json({
+          products: [],
+          total: 0,
+          page: parseInt(page),
+          limit: parseInt(limit),
+          totalPages: 0,
+        });
+      }
     }
 
     if (search) {
@@ -19,14 +40,18 @@ router.get('/', async (req, res) => {
 
     const skip = (parseInt(page) - 1) * parseInt(limit);
     const products = await Product.find(query)
+      .populate('category', 'name slug isActive')
       .skip(skip)
       .limit(parseInt(limit))
       .sort({ createdAt: -1 });
 
+    // Filter out products with inactive categories (double check)
+    const filteredProducts = products.filter(p => p.category && p.category.isActive !== false);
+
     const total = await Product.countDocuments(query);
 
     res.json({
-      products,
+      products: filteredProducts,
       total,
       page: parseInt(page),
       limit: parseInt(limit),

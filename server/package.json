@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "node --watch src/index.js",
     "start": "node src/index.js",
-    "create-admin": "node src/scripts/createAdmin.js"
+    "create-admin": "node src/scripts/createAdmin.js",
+    "seed-categories": "node src/scripts/seedCategories.js"
   },
   "dependencies": {
     "@google/generative-ai": "^0.21.0",

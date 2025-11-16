@@ -20,14 +20,20 @@ export const AuthProvider = ({ children }) => {
       const token = localStorage.getItem('authToken');
       if (token) {
         try {
-          // Verify token and get current user info
-          // Assuming /api/auth/me is a protected route that returns user info
-          const response = await api.get('/auth/me', {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
-          setUser(response.data);
+          // Try to verify as regular user first
+          try {
+            const response = await api.get('/auth/me');
+            setUser(response.data);
+          } catch (userError) {
+            // If regular user check fails, try admin endpoint
+            try {
+              const adminResponse = await api.get('/admin/me');
+              setUser(adminResponse.data);
+            } catch (adminError) {
+              // Both failed, token is invalid
+              throw adminError;
+            }
+          }
         } catch (error) {
           // Token is invalid, remove it
           localStorage.removeItem('authToken');
@@ -40,18 +46,9 @@ export const AuthProvider = ({ children }) => {
     verifyToken();
   }, []);
 
-  const login = async (email, password) => {
-    try {
-      const response = await api.post('/admin/login', { email, password });
-      const { token, user } = response.data;
-
-      localStorage.setItem('authToken', token);
-      setUser(user);
-      return { success: true, user };
-    } catch (error) {
-      console.error('Login failed:', error);
-      return { success: false, error: error.response?.data?.message || 'Login failed' };
-    }
+  const login = (token, userData) => {
+    localStorage.setItem('authToken', token);
+    setUser(userData);
   };
 
   const logout = () => {

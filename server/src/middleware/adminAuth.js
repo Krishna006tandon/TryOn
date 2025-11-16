@@ -18,8 +18,10 @@ export const adminAuth = async (req, res, next) => {
       return res.status(401).json({ message: 'User not found' });
     }
 
-    // Check if user is admin
-    if (user.role !== 'admin' && user.email !== process.env.ADMIN_EMAIL) {
+    // Check if user is admin (you can add an isAdmin field to User model)
+    // For now, we'll check if user has admin role or is the first user
+    // You should add an isAdmin field to your User schema
+    if (!user.isAdmin && user.email !== process.env.ADMIN_EMAIL) {
       return res.status(403).json({ message: 'Access denied. Admin privileges required.' });
     }
 
