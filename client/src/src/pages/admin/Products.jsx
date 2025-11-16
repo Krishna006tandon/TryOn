@@ -9,7 +9,7 @@ import { Input } from '../../components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '../../components/ui/dialog';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '../../components/ui/select'; // Assuming a Select component will be created
 import { Textarea } from '../../components/ui/textarea'; // Assuming a Textarea component will be created
-import { Package, Plus, Edit, Trash2, Upload } from 'lucide-react';
+import { Package, Plus, Edit, Trash2 } from 'lucide-react';
 
 const AddEditProductModal = ({ isOpen, onClose, onSave, product, categories }) => {
   const [formData, setFormData] = useState({
