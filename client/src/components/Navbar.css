@@ -9,10 +9,24 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+
+  padding: 1.1rem 4vw;
+  background: rgba(5, 5, 10, 0.9) !important;
+  backdrop-filter: blur(18px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+/* Ensure navbar stays dark in both themes */
+html.light .nav-shell,
+html.dark .nav-shell {
+  background: rgba(5, 5, 10, 0.9) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+
   padding: 0 4vw;
   background: rgba(5, 5, 10, 0.95);
   backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--stroke);
+
 }
 
 .logo {
@@ -20,11 +34,55 @@
   font-size: 1rem;
   letter-spacing: 0.4rem;
   text-transform: uppercase;
-  color: #f9f9ff;
+  color: #f9f9ff !important;
   background: none;
   border: none;
   padding: 0;
   cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+/* Ensure logo text stays white in both themes */
+html.light .logo,
+html.dark .logo {
+  color: #f9f9ff !important;
+}
+
+.logo-image {
+  height: 4rem;
+  width: auto;
+  object-fit: contain;
+}
+
+.back-button {
+  background: none;
+  border: none;
+  color: #f9f9ff !important;
+  cursor: pointer;
+  padding: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease;
+}
+
+/* Ensure back button stays white in both themes */
+html.light .back-button,
+html.dark .back-button {
+  color: #f9f9ff !important;
+}
+
+.back-button:hover {
+  transform: translateX(-4px);
+}
+
+.back-button svg {
+  width: 28px;
+  height: 28px;
+
   white-space: nowrap;
   margin: 0 auto;
   flex: 1;
@@ -44,6 +102,7 @@
     font-size: 0.75rem;
     letter-spacing: 0.15rem;
   }
+
 }
 
 nav {
@@ -54,7 +113,7 @@ nav {
 .nav-link {
   position: relative;
   text-decoration: none;
-  color: var(--muted);
+  color: rgba(255, 255, 255, 0.7) !important;
   font-size: 0.9rem;
   letter-spacing: 0.08em;
   display: flex;
@@ -63,8 +122,14 @@ nav {
   transition: color 0.2s ease;
 }
 
+/* Ensure nav links stay light gray in both themes */
+html.light .nav-link,
+html.dark .nav-link {
+  color: rgba(255, 255, 255, 0.7) !important;
+}
+
 .nav-link:hover {
-  color: #fff;
+  color: #fff !important;
 }
 
 .nav-underline {
@@ -87,6 +152,7 @@ nav {
 }
 
 .search {
+  position: relative;
   background: rgba(255, 255, 255, 0.08);
   border-radius: 999px;
   padding: 0.4rem 1rem;
@@ -99,11 +165,106 @@ nav {
   background: transparent;
   width: 180px;
   outline: none;
-  color: #f9f9ff;
+  color: #f9f9ff !important;
+}
+
+/* Ensure search input stays white in both themes */
+html.light .search input,
+html.dark .search input {
+  color: #f9f9ff !important;
 }
 
 .search input::placeholder {
-  color: rgba(255, 255, 255, 0.6);
+  color: rgba(255, 255, 255, 0.6) !important;
+}
+
+html.light .search input::placeholder,
+html.dark .search input::placeholder {
+  color: rgba(255, 255, 255, 0.6) !important;
+}
+
+.search-suggestions {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  right: 0;
+  background: rgba(5, 5, 10, 0.95) !important;
+  backdrop-filter: blur(18px);
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 12px;
+  padding: 0.5rem;
+  box-shadow: 0 10px 30px rgba(5, 5, 10, 0.8);
+  max-height: 300px;
+  overflow-y: auto;
+  z-index: 1000;
+}
+
+/* Ensure search suggestions stay dark in both themes */
+html.light .search-suggestions,
+html.dark .search-suggestions {
+  background: rgba(5, 5, 10, 0.95) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+.search-suggestion-item {
+  padding: 0.75rem 1rem;
+  color: #f9f9ff !important;
+  cursor: pointer;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  transition: background-color 0.2s ease;
+}
+
+/* Ensure suggestion items stay white in both themes */
+html.light .search-suggestion-item,
+html.dark .search-suggestion-item {
+  color: #f9f9ff !important;
+}
+
+.search-suggestion-item:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.search-suggestions::-webkit-scrollbar {
+  width: 6px;
+}
+
+.search-suggestions::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+}
+
+.search-suggestions::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+}
+
+.search-suggestions::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.search-actions {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(5, 5, 10, 0.95) !important;
+  backdrop-filter: blur(18px);
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 12px;
+  padding: 0.5rem;
+  box-shadow: 0 10px 30px rgba(5, 5, 10, 0.8);
+  z-index: 1001;
+  min-width: fit-content;
+}
+
+/* Ensure search actions stay dark in both themes */
+html.light .search-actions,
+html.dark .search-actions {
+  background: rgba(5, 5, 10, 0.95) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
 }
 
 .nav-cart {
@@ -129,6 +290,67 @@ nav {
   place-items: center;
   font-size: 0.75rem;
   box-shadow: 0 10px 20px rgba(139, 108, 255, 0.4);
+}
+
+/* Style for Login, Profile, Logout buttons and LanguageSwitcher */
+.nav-actions > div a,
+.nav-actions > div button:not(.nav-cart) {
+  color: #f9f9ff !important;
+  border-color: rgba(255, 255, 255, 0.3) !important;
+  background: rgba(255, 255, 255, 0.05) !important;
+}
+
+.nav-actions > div a:hover,
+.nav-actions > div button:not(.nav-cart):hover {
+  background: rgba(255, 255, 255, 0.15) !important;
+  border-color: rgba(255, 255, 255, 0.5) !important;
+  color: #fff !important;
+}
+
+/* Ensure these buttons stay visible in both themes */
+html.light .nav-actions > div a,
+html.light .nav-actions > div button:not(.nav-cart),
+html.dark .nav-actions > div a,
+html.dark .nav-actions > div button:not(.nav-cart) {
+  color: #f9f9ff !important;
+  border-color: rgba(255, 255, 255, 0.3) !important;
+  background: rgba(255, 255, 255, 0.05) !important;
+}
+
+html.light .nav-actions > div a:hover,
+html.light .nav-actions > div button:not(.nav-cart):hover,
+html.dark .nav-actions > div a:hover,
+html.dark .nav-actions > div button:not(.nav-cart):hover {
+  background: rgba(255, 255, 255, 0.15) !important;
+  border-color: rgba(255, 255, 255, 0.5) !important;
+  color: #fff !important;
+}
+
+.profile-icon-btn {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  color: #f9f9ff !important;
+  padding: 0.5rem;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  width: 40px;
+  height: 40px;
+}
+
+.profile-icon-btn:hover {
+  background: rgba(255, 255, 255, 0.15) !important;
+  border-color: rgba(255, 255, 255, 0.5) !important;
+}
+
+html.light .profile-icon-btn,
+html.dark .profile-icon-btn {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  color: #f9f9ff !important;
 }
 
 @media (max-width: 960px) {

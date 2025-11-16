@@ -1,22 +1,15 @@
 import HeroSlider from '../sections/HeroSlider.jsx';
 import UtilityStrip from '../components/UtilityStrip.jsx';
 import CategoryTiles from '../sections/CategoryTiles.jsx';
-import FeaturedProducts from '../sections/FeaturedProducts.jsx';
-import TrendingOutfits from '../sections/TrendingOutfits.jsx';
-import CTASection from '../sections/CTASection.jsx';
+import CategorySection from '../sections/CategorySection.jsx';
 import PersonalizedOffers from '../components/PersonalizedOffers.jsx';
 
 const Home = ({
   heroSlides = [],
-  featuredProducts = [],
-  trendingOutfits = [],
   isHydrated = false,
   scrollToSection = () => {},
-  onAddToCart = () => {},
-  onQuickView = () => {},
   onExploreCategory = () => {},
   onProductClick = () => {},
-  onTrendingClick = () => {},
   userId,
 }) => (
   <main>
@@ -28,24 +21,13 @@ const Home = ({
     />
     <UtilityStrip />
     <CategoryTiles onExploreCategory={onExploreCategory} />
-    <FeaturedProducts
-      products={featuredProducts}
-      onViewAll={() => scrollToSection('#trending')}
-      onAddToCart={onAddToCart}
-      onQuickView={onQuickView}
-      onProductClick={onProductClick}
-    />
-    <TrendingOutfits items={trendingOutfits} onTrendClick={onTrendingClick} />
+    <CategorySection onCategoryClick={onExploreCategory} />
     {userId && (
       <PersonalizedOffers
         userId={userId}
         onProductClick={onProductClick}
       />
     )}
-    <CTASection
-      onPrimaryAction={() => scrollToSection('#featured')}
-      onSecondaryAction={() => scrollToSection('#contact')}
-    />
   </main>
 );
 

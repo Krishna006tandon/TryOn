@@ -29,9 +29,13 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      // Unauthorized - redirect to login
+      // Unauthorized - check if we're on an admin route
+      const isAdminRoute = window.location.pathname.startsWith('/admin');
       localStorage.removeItem('authToken');
-      window.location.href = '/login';
+      // Only redirect if not already on a login page
+      if (!window.location.pathname.includes('/login')) {
+        window.location.href = isAdminRoute ? '/admin/login' : '/login';
+      }
     }
     return Promise.reject(error);
   }

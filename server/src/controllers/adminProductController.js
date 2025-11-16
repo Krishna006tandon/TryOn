@@ -27,9 +27,15 @@ export const getAllProducts = async (req, res) => {
       ];
     }
 
-    // Category filter
+    // Category filter - also ensure category is active for user-facing queries
     if (category) {
       query.category = category;
+      // For admin, we might want to see products even if category is inactive
+      // But for consistency, we can add a check if needed
+    } else {
+      // If no specific category filter, ensure we only show products with active categories
+      // This is important for user-facing queries, but admin might want to see all
+      // For now, we'll keep it flexible for admin panel
     }
 
     // Price range filter

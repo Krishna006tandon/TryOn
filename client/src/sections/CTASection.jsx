@@ -10,24 +10,18 @@ const CTASection = ({ onPrimaryAction = () => {}, onSecondaryAction = () => {} }
       viewport={{ once: true }}
       transition={{ duration: 0.8 }}
     >
-      <p className="eyebrow">capsule drop</p>
-      <h3>Sculpted Minimalist Capsule</h3>
-      <p>29 limited looks in a monochrome pastel palette.</p>
+      <p className="eyebrow">Discover Your Style. Wear Your Confidence.</p>
+      <h3>Timeless Essentials for the Modern You.</h3>
+      <p>Be Bold. Be Stylish. Be You.</p>
+      <p>Fresh Styles Just Dropped — Grab Yours Before They're Gone!</p>
+      <p>Join Thousands Who Upgraded Their Wardrobe Today</p>
       <div className="cta-actions">
         <motion.button
           whileHover={{ scale: 1.04 }}
           whileTap={{ scale: 0.95 }}
           onClick={onPrimaryAction}
         >
-          Shop Now
-        </motion.button>
-        <motion.button
-          className="ghost"
-          whileHover={{ scale: 1.04 }}
-          whileTap={{ scale: 0.95 }}
-          onClick={onSecondaryAction}
-        >
-          Explore Collection
+          Shop Bestsellers
         </motion.button>
       </div>
     </motion.div>

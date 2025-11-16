@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useAuth } from '../../contexts/AuthContext';
+import api from '../../utils/api';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -16,13 +17,21 @@ const Login = () => {
     setError('');
     setLoading(true);
 
-    const result = await login(email, password);
-    setLoading(false);
-
-    if (result.success) {
-      navigate('/admin/dashboard');
-    } else {
-      setError(result.error || 'Invalid credentials');
+    try {
+      const response = await api.post('/admin/login', { email, password });
+      
+      if (response.data.token && response.data.user) {
+        // Store token and user data
+        login(response.data.token, response.data.user);
+        // Redirect to admin dashboard
+        navigate('/admin/dashboard');
+      } else {
+        setError('Login failed. Please try again.');
+      }
+    } catch (err) {
+      setError(err.response?.data?.message || 'Invalid credentials');
+    } finally {
+      setLoading(false);
     }
   };
 

@@ -1,12 +1,13 @@
 .hero-shell {
   position: relative;
-  min-height: 72vh;
+  width: 100%;
   border-radius: 40px;
   overflow: hidden;
   margin: 2rem auto 0;
   background: radial-gradient(circle at 20% 20%, #1c1c32, #07070d);
   display: flex;
-  align-items: flex-end;
+  align-items: center;
+  justify-content: center;
   border: 1px solid rgba(255, 255, 255, 0.06);
   box-shadow: 0 50px 120px rgba(4, 4, 8, 0.8);
 }
@@ -21,75 +22,24 @@
   pointer-events: none;
 }
 
-.hero-shell.loading .hero-overlay {
-  background: linear-gradient(135deg, rgba(10, 10, 18, 0.8), rgba(28, 28, 50, 0.5));
-}
 
 .hero-image {
-  position: absolute;
-  inset: 0;
   width: 100%;
-  height: 100%;
-  object-fit: cover;
+  height: auto;
+  display: block;
+  object-fit: contain;
   object-position: center;
-  filter: brightness(0.9) saturate(0.9);
 }
 
-.hero-overlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(120deg, rgba(5, 5, 10, 0.85), rgba(5, 5, 10, 0.3));
-  z-index: 1;
-}
-
-.hero-content {
-  position: relative;
-  z-index: 2;
-  padding: clamp(2rem, 5vw, 3.5rem);
-  color: #f7f4ff;
-  max-width: 520px;
-}
-
-.hero-content h1 {
-  font-size: clamp(2rem, 4vw, 4rem);
-  margin: 0.6rem 0 1rem;
-  font-family: 'Poppins', sans-serif;
-}
-
-.hero-content p {
-  margin: 0;
-  font-size: 1rem;
-  color: var(--muted);
-}
-
-.hero-cta {
-  display: flex;
-  gap: 1rem;
-  margin-top: 1.8rem;
-}
-
-.hero-cta button {
-  padding: 0.78rem 1.9rem;
-  border-radius: 999px;
-  background: var(--accent-gradient);
-  border: none;
-  font-weight: 600;
-  color: #08080f;
-  box-shadow: 0 20px 30px rgba(255, 125, 157, 0.3);
-  animation: breathe 4s ease-in-out infinite;
-}
-
-.hero-cta .secondary {
-  background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  color: #fff;
-  box-shadow: none;
-}
 
 .hero-dots {
+  position: absolute;
+  bottom: 1.5rem;
+  left: 50%;
+  transform: translateX(-50%);
   display: flex;
   gap: 0.6rem;
-  margin-top: 2rem;
+  z-index: 10;
 }
 
 .dot {
@@ -105,21 +55,10 @@
   background: var(--accent);
 }
 
-.eyebrow {
-  text-transform: uppercase;
-  letter-spacing: 0.6em;
-  font-size: 0.75rem;
-  color: var(--muted);
-}
 
 @media (max-width: 768px) {
   .hero-shell {
     border-radius: 24px;
-    min-height: 70vh;
-  }
-
-  .hero-cta {
-    flex-direction: column;
   }
 }
 
@@ -135,17 +74,6 @@
   }
 }
 
-@keyframes breathe {
-  0% {
-    transform: translateZ(0) scale(1);
-  }
-  50% {
-    transform: translateZ(0) scale(1.04);
-  }
-  100% {
-    transform: translateZ(0) scale(1);
-  }
-}
 
 @keyframes pulse {
   0%,
