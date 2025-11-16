@@ -1,0 +1,68 @@
+.cta-shell {
+  margin-top: 5rem;
+}
+
+.cta-card {
+  border-radius: 32px;
+  padding: clamp(2rem, 5vw, 3rem);
+  background: radial-gradient(circle at top right, #ff7d9d, #1f1f33 55%, #0a0a15);
+  background-size: 200% 200%;
+  color: #fff;
+  box-shadow: 0 40px 80px rgba(3, 3, 6, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  position: relative;
+  overflow: hidden;
+  animation: gradientShift 18s ease-in-out infinite;
+}
+
+.cta-card h3 {
+  font-size: clamp(1.8rem, 3vw, 3rem);
+  margin: 0.4rem 0 0.8rem;
+  font-family: 'Poppins', sans-serif;
+}
+
+.cta-card p {
+  margin: 0.2rem 0;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.cta-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.cta-card button {
+  border-radius: 999px;
+  padding: 0.7rem 1.8rem;
+  border: none;
+  font-weight: 600;
+  color: #050507;
+  background: rgba(255, 255, 255, 0.9);
+  animation: breathe 4s ease-in-out infinite;
+}
+
+.cta-card .ghost {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  color: #fff;
+}
+
+@media (max-width: 640px) {
+  .cta-actions {
+    flex-direction: column;
+  }
+}
+
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+

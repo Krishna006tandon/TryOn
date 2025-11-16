@@ -1,0 +1,58 @@
+.aura-bg {
+  position: fixed;
+  inset: -20vh -10vw 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  filter: blur(60px);
+  opacity: 0.5;
+}
+
+.aura {
+  position: absolute;
+  width: 45vw;
+  height: 45vw;
+  border-radius: 50%;
+  animation: drift 30s linear infinite;
+  mix-blend-mode: screen;
+}
+
+.layer-one {
+  background: radial-gradient(circle, rgba(255, 125, 157, 0.8), transparent 70%);
+  top: 10%;
+  left: 5%;
+  animation-duration: 36s;
+}
+
+.layer-two {
+  background: radial-gradient(circle, rgba(139, 108, 255, 0.8), transparent 65%);
+  bottom: 5%;
+  right: 8%;
+  animation-duration: 42s;
+}
+
+.layer-three {
+  background: radial-gradient(circle, rgba(255, 179, 108, 0.7), transparent 60%);
+  top: 40%;
+  right: 35%;
+  animation-duration: 48s;
+}
+
+@keyframes drift {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  25% {
+    transform: translate3d(-5%, 4%, 0) scale(1.1);
+  }
+  50% {
+    transform: translate3d(6%, -6%, 0) scale(0.95);
+  }
+  75% {
+    transform: translate3d(-4%, -3%, 0) scale(1.05);
+  }
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+

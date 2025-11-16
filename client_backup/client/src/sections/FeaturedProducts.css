@@ -1,0 +1,116 @@
+.featured-shell {
+  margin-top: 4rem;
+}
+
+.section-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  color: #fff;
+}
+
+.section-head h2 {
+  font-family: 'Poppins', sans-serif;
+  margin: 0;
+}
+
+.section-head button {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--stroke);
+  border-radius: 999px;
+  padding: 0.5rem 1.2rem;
+  color: #fff;
+}
+
+.section-head button:hover {
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.featured-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.5rem;
+}
+
+.product-card {
+  background: var(--surface-2);
+  border-radius: 24px;
+  padding: 1rem;
+  box-shadow: 0 25px 60px rgba(3, 3, 6, 0.7);
+  border: 1px solid var(--stroke);
+  color: #fff;
+  cursor: pointer;
+}
+
+.product-media {
+  position: relative;
+  overflow: hidden;
+  border-radius: 20px;
+}
+
+.product-media img {
+  width: 100%;
+  display: block;
+  border-radius: 20px;
+}
+
+.product-media .alternate {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.product-card:hover .alternate {
+  opacity: 1;
+}
+
+.product-tag {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  background: rgba(5, 5, 10, 0.6);
+  padding: 0.2rem 0.8rem;
+  font-size: 0.75rem;
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.product-actions {
+  position: absolute;
+  bottom: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 0.6rem;
+  opacity: 0;
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.product-card:hover .product-actions {
+  opacity: 1;
+  transform: translate(-50%, -8px);
+}
+
+.product-actions button {
+  border-radius: 999px;
+  padding: 0.4rem 1rem;
+  border: none;
+  background: rgba(5, 5, 10, 0.85);
+  color: #fff;
+  font-size: 0.85rem;
+}
+
+.product-actions .ghost {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.product-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 0.8rem;
+  color: var(--muted);
+}
+

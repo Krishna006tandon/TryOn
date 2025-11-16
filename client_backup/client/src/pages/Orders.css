@@ -1,0 +1,220 @@
+.orders-page {
+  min-height: 100vh;
+  padding: 2rem 4vw;
+  background: var(--bg-primary, #050507);
+  color: #f9f9ff;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+html.light .orders-page {
+  background: #ffffff;
+  color: #000000;
+}
+
+.orders-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.orders-page h1 {
+  font-size: 2rem;
+  margin-bottom: 2rem;
+  color: #f9f9ff;
+  transition: color 0.3s ease;
+}
+
+html.light .orders-page h1 {
+  color: #000000;
+}
+
+.orders-loading,
+.orders-empty {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: rgba(255, 255, 255, 0.7);
+  transition: color 0.3s ease;
+}
+
+html.light .orders-loading,
+html.light .orders-empty {
+  color: rgba(0, 0, 0, 0.7);
+}
+
+.orders-empty button {
+  margin-top: 1rem;
+  padding: 0.75rem 2rem;
+  background: var(--accent-gradient);
+  border: none;
+  color: #050507;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: transform 0.2s ease;
+}
+
+.orders-empty button:hover {
+  transform: translateY(-2px);
+}
+
+.orders-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.order-card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 1.5rem;
+  display: flex;
+  gap: 1.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+html.light .order-card {
+  background: rgba(0, 0, 0, 0.02);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.order-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+html.light .order-card:hover {
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  border-color: rgba(0, 0, 0, 0.2);
+}
+
+.order-card.cancelled {
+  opacity: 0.6;
+}
+
+.order-images {
+  display: flex;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.order-images img {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.order-details {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.order-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.order-header h3 {
+  margin: 0;
+  color: #f9f9ff;
+  font-size: 1.2rem;
+  transition: color 0.3s ease;
+}
+
+html.light .order-header h3 {
+  color: #000000;
+}
+
+.order-status {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.order-status.pending {
+  background: rgba(255, 193, 7, 0.2);
+  color: #ffc107;
+}
+
+.order-status.confirmed,
+.order-status.processing,
+.order-status.packed {
+  background: rgba(33, 150, 243, 0.2);
+  color: #2196f3;
+}
+
+.order-status.shipped,
+.order-status.out_for_delivery {
+  background: rgba(76, 175, 80, 0.2);
+  color: #4caf50;
+}
+
+.order-status.delivered {
+  background: rgba(76, 175, 80, 0.3);
+  color: #4caf50;
+}
+
+.order-status.cancelled {
+  background: rgba(244, 67, 54, 0.2);
+  color: #f44336;
+}
+
+.order-date,
+.order-total {
+  color: rgba(255, 255, 255, 0.7);
+  margin: 0;
+  transition: color 0.3s ease;
+}
+
+html.light .order-date,
+html.light .order-total {
+  color: rgba(0, 0, 0, 0.7);
+}
+
+.cancel-order-btn {
+  margin-top: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: rgba(244, 67, 54, 0.2);
+  border: 1px solid rgba(244, 67, 54, 0.3);
+  color: #f44336;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+  align-self: flex-start;
+}
+
+.cancel-order-btn:hover {
+  background: rgba(244, 67, 54, 0.3);
+  border-color: rgba(244, 67, 54, 0.5);
+}
+
+.more-images {
+  width: 100px;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: rgba(255, 255, 255, 0.7);
+  font-weight: 600;
+}
+
+html.light .more-images {
+  background: rgba(0, 0, 0, 0.02);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  color: rgba(0, 0, 0, 0.7);
+}
+
