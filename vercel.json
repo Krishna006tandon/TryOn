@@ -5,8 +5,12 @@
       "destination": "/server/src/index.js"
     },
     {
+      "source": "/",
+      "destination": "/client/dist/index.html"
+    },
+    {
       "source": "/(.*)",
-      "destination": "/$1"
+      "destination": "/client/dist/$1"
     }
   ],
   "headers": [
