@@ -2,12 +2,11 @@ import { useState, useRef, useEffect } from 'react';
 import { LayoutGroup, motion, AnimatePresence } from 'framer-motion';
 import { Link, useNavigate, useLocation } from 'react-router-dom'; // Import Link and useNavigate
 import { useAuth } from '../contexts/AuthContext'; // Import useAuth
-import { useTheme } from '../contexts/ThemeContext'; // Import useTheme
 import VisualSearch from './VisualSearch.jsx';
 import VoiceSearch from './VoiceSearch.jsx';
 import LanguageSwitcher from './LanguageSwitcher.jsx';
-import TryOnLogoDark from '../images/TryOn_Dark.png';
-import TryOnLogoLight from '../images/TryOn_Light.jpg';
+import ProfileDropdown from './ProfileDropdown.jsx';
+import TryOnLogo from '../images/TryOn.png';
 import './Navbar.css';
 
 const navLinks = [
@@ -30,11 +29,11 @@ const searchSuggestions = [
 
 const Navbar = ({ onShopClick = () => {}, cartCount = 0, onCartClick = () => {} }) => {
   const { user, logout } = useAuth(); // Use useAuth hook
-  const { isDark } = useTheme(); // Get theme
   const navigate = useNavigate();
   const location = useLocation();
   const [searchValue, setSearchValue] = useState('');
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [showProfileDropdown, setShowProfileDropdown] = useState(false);
   const searchRef = useRef(null);
   const suggestionsRef = useRef(null);
   const searchActionsRef = useRef(null);
@@ -120,7 +119,11 @@ const Navbar = ({ onShopClick = () => {}, cartCount = 0, onCartClick = () => {} 
         </button>
       ) : (
         <button className="logo" onClick={onShopClick}>
-          <img src={isDark ? TryOnLogoDark : TryOnLogoLight} alt="TryOn Logo" className="logo-image" />
+          <img 
+            src={TryOnLogo} 
+            alt="TryOn Logo" 
+            className="logo-image"
+          />
           tryon collective
         </button>
       )}
@@ -192,11 +195,18 @@ const Navbar = ({ onShopClick = () => {}, cartCount = 0, onCartClick = () => {} 
         </form>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <LanguageSwitcher />
-          {user ? ( // Conditionally render Profile link and Logout button
+          {user ? ( // Conditionally render Profile icon and Logout button
             <>
-              <Link to="/profile" className="px-3 py-1 text-sm border rounded hover:bg-gray-100 transition-colors">
-                Profile
-              </Link>
+              <button
+                className="profile-icon-btn"
+                onClick={() => setShowProfileDropdown(!showProfileDropdown)}
+                aria-label="Profile"
+              >
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                  <circle cx="12" cy="7" r="4" />
+                </svg>
+              </button>
               <button onClick={logout} className="px-3 py-1 text-sm border rounded hover:bg-gray-100 transition-colors">
                 Logout
               </button>
@@ -207,6 +217,12 @@ const Navbar = ({ onShopClick = () => {}, cartCount = 0, onCartClick = () => {} 
             </Link>
           )}
         </div>
+        {user && (
+          <ProfileDropdown
+            isOpen={showProfileDropdown}
+            onClose={() => setShowProfileDropdown(false)}
+          />
+        )}
         <motion.button className="nav-cart" whileTap={{ scale: 0.9 }} onClick={onCartClick}>
           Cart
           <motion.span

@@ -1,14 +1,37 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { useAuth } from '../contexts/AuthContext';
+import api from '../utils/api';
 import { getProductsBySearchTerm, getProductsByCategory } from '../data/productData';
 import './SearchResults.css';
 
 const SearchResults = ({ onAddToCart = () => {}, onProductClick = () => {} }) => {
   const { query, category } = useParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [wishlist, setWishlist] = useState(new Set());
   const [sortBy, setSortBy] = useState('relevance');
+
+  // Load wishlist from database
+  useEffect(() => {
+    if (user) {
+      fetchWishlist();
+    }
+  }, [user]);
+
+  const fetchWishlist = async () => {
+    if (!user) return;
+    try {
+      const response = await api.get(`/user-details/${user.id}`);
+      if (response.data?.wishlist) {
+        const wishlistIds = new Set(response.data.wishlist.map(item => item.productId));
+        setWishlist(wishlistIds);
+      }
+    } catch (error) {
+      console.error('Error fetching wishlist:', error);
+    }
+  };
 
   const products = useMemo(() => {
     if (category) {
@@ -34,16 +57,46 @@ const SearchResults = ({ onAddToCart = () => {}, onProductClick = () => {} }) =>
     }
   }, [products, sortBy]);
 
-  const toggleWishlist = (productId) => {
-    setWishlist((prev) => {
-      const newSet = new Set(prev);
-      if (newSet.has(productId)) {
-        newSet.delete(productId);
+  const toggleWishlist = async (productId) => {
+    if (!user) {
+      navigate('/login');
+      return;
+    }
+
+    const product = products.find(p => p.id === productId);
+    if (!product) return;
+
+    const isInWishlist = wishlist.has(productId);
+
+    try {
+      if (isInWishlist) {
+        // Remove from wishlist
+        await api.delete(`/user-details/${user.id}/wishlist`, {
+          data: { productId },
+        });
+        setWishlist((prev) => {
+          const newSet = new Set(prev);
+          newSet.delete(productId);
+          return newSet;
+        });
       } else {
-        newSet.add(productId);
+        // Add to wishlist
+        await api.post(`/user-details/${user.id}/wishlist`, {
+          productId,
+          productImage: product.image,
+          productName: product.name,
+          price: product.price,
+        });
+        setWishlist((prev) => {
+          const newSet = new Set(prev);
+          newSet.add(productId);
+          return newSet;
+        });
       }
-      return newSet;
-    });
+    } catch (error) {
+      console.error('Error toggling wishlist:', error);
+      alert('Failed to update wishlist. Please try again.');
+    }
   };
 
   const displayQuery = category ? category.charAt(0).toUpperCase() + category.slice(1) : query;

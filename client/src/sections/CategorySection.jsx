@@ -43,13 +43,13 @@ const categories = [
     searchTerm: 'Hoodie',
     tag: 'Casual',
     items: [
-      { id: 'casual-1', image: hoodie1, title: 'Casual Look 1' },
-      { id: 'casual-2', image: hoodie2, title: 'Casual Look 2' },
-      { id: 'casual-3', image: hoodie3, title: 'Casual Look 3' },
-      { id: 'casual-4', image: hoodie4, title: 'Casual Look 4' },
-      { id: 'casual-5', image: hoodie5, title: 'Casual Look 5' },
-      { id: 'casual-6', image: jeans1, title: 'Casual Look 6' },
-      { id: 'casual-7', image: jeans2, title: 'Casual Look 7' },
+      { id: 'casual-1', image: hoodie1, title: 'Casual Look 1', categoryTag: 'Casual' },
+      { id: 'casual-2', image: hoodie2, title: 'Casual Look 2', categoryTag: 'Casual' },
+      { id: 'casual-3', image: hoodie3, title: 'Casual Look 3', categoryTag: 'Casual' },
+      { id: 'casual-4', image: hoodie4, title: 'Casual Look 4', categoryTag: 'Casual' },
+      { id: 'casual-5', image: hoodie5, title: 'Casual Look 5', categoryTag: 'Casual' },
+      { id: 'casual-6', image: jeans1, title: 'Casual Look 6', categoryTag: 'Casual' },
+      { id: 'casual-7', image: jeans2, title: 'Casual Look 7', categoryTag: 'Casual' },
     ],
   },
   {
@@ -57,11 +57,11 @@ const categories = [
     searchTerm: 'Tuxedo',
     tag: 'Formal',
     items: [
-      { id: 'formal-1', image: tuxedo1, title: 'Formal Look 1' },
-      { id: 'formal-2', image: tuxedo2, title: 'Formal Look 2' },
-      { id: 'formal-3', image: tuxedo3, title: 'Formal Look 3' },
-      { id: 'formal-4', image: tuxedo4, title: 'Formal Look 4' },
-      { id: 'formal-5', image: tuxedo5, title: 'Formal Look 5' },
+      { id: 'formal-1', image: tuxedo1, title: 'Formal Look 1', categoryTag: 'Formal' },
+      { id: 'formal-2', image: tuxedo2, title: 'Formal Look 2', categoryTag: 'Formal' },
+      { id: 'formal-3', image: tuxedo3, title: 'Formal Look 3', categoryTag: 'Formal' },
+      { id: 'formal-4', image: tuxedo4, title: 'Formal Look 4', categoryTag: 'Formal' },
+      { id: 'formal-5', image: tuxedo5, title: 'Formal Look 5', categoryTag: 'Formal' },
     ],
   },
   {
@@ -69,11 +69,11 @@ const categories = [
     searchTerm: 'Kurta',
     tag: 'Traditional',
     items: [
-      { id: 'traditional-1', image: kurta1, title: 'Traditional Look 1' },
-      { id: 'traditional-2', image: kurta2, title: 'Traditional Look 2' },
-      { id: 'traditional-3', image: kurta3, title: 'Traditional Look 3' },
-      { id: 'traditional-4', image: kurta4, title: 'Traditional Look 4' },
-      { id: 'traditional-5', image: kurta5, title: 'Traditional Look 5' },
+      { id: 'traditional-1', image: kurta1, title: 'Traditional Look 1', categoryTag: 'Traditional' },
+      { id: 'traditional-2', image: kurta2, title: 'Traditional Look 2', categoryTag: 'Traditional' },
+      { id: 'traditional-3', image: kurta3, title: 'Traditional Look 3', categoryTag: 'Traditional' },
+      { id: 'traditional-4', image: kurta4, title: 'Traditional Look 4', categoryTag: 'Traditional' },
+      { id: 'traditional-5', image: kurta5, title: 'Traditional Look 5', categoryTag: 'Traditional' },
     ],
   },
   {
@@ -81,11 +81,11 @@ const categories = [
     searchTerm: 'Dress',
     tag: 'Party',
     items: [
-      { id: 'party-1', image: dress1, title: 'Party Look 1' },
-      { id: 'party-2', image: dress2, title: 'Party Look 2' },
-      { id: 'party-3', image: dress3, title: 'Party Look 3' },
-      { id: 'party-4', image: dress4, title: 'Party Look 4' },
-      { id: 'party-5', image: dress5, title: 'Party Look 5' },
+      { id: 'party-1', image: dress1, title: 'Party Look 1', categoryTag: 'Party' },
+      { id: 'party-2', image: dress2, title: 'Party Look 2', categoryTag: 'Party' },
+      { id: 'party-3', image: dress3, title: 'Party Look 3', categoryTag: 'Party' },
+      { id: 'party-4', image: dress4, title: 'Party Look 4', categoryTag: 'Party' },
+      { id: 'party-5', image: dress5, title: 'Party Look 5', categoryTag: 'Party' },
     ],
   },
   {
@@ -93,11 +93,11 @@ const categories = [
     searchTerm: 'Shirt',
     tag: 'Work',
     items: [
-      { id: 'work-1', image: shirt1, title: 'Work Look 1' },
-      { id: 'work-2', image: shirt2, title: 'Work Look 2' },
-      { id: 'work-3', image: shirt3, title: 'Work Look 3' },
-      { id: 'work-4', image: shirt4, title: 'Work Look 4' },
-      { id: 'work-5', image: shirt5, title: 'Work Look 5' },
+      { id: 'work-1', image: shirt1, title: 'Work Look 1', categoryTag: 'Work' },
+      { id: 'work-2', image: shirt2, title: 'Work Look 2', categoryTag: 'Work' },
+      { id: 'work-3', image: shirt3, title: 'Work Look 3', categoryTag: 'Work' },
+      { id: 'work-4', image: shirt4, title: 'Work Look 4', categoryTag: 'Work' },
+      { id: 'work-5', image: shirt5, title: 'Work Look 5', categoryTag: 'Work' },
     ],
   },
   {
@@ -105,34 +105,57 @@ const categories = [
     searchTerm: 'Lehenga',
     tag: 'Festive',
     items: [
-      { id: 'festive-1', image: lehenga1, title: 'Festive Look 1' },
-      { id: 'festive-2', image: lehenga2, title: 'Festive Look 2' },
-      { id: 'festive-3', image: lehenga3, title: 'Festive Look 3' },
-      { id: 'festive-4', image: lehenga4, title: 'Festive Look 4' },
-      { id: 'festive-5', image: lehenga5, title: 'Festive Look 5' },
+      { id: 'festive-1', image: lehenga1, title: 'Festive Look 1', categoryTag: 'Festive' },
+      { id: 'festive-2', image: lehenga2, title: 'Festive Look 2', categoryTag: 'Festive' },
+      { id: 'festive-3', image: lehenga3, title: 'Festive Look 3', categoryTag: 'Festive' },
+      { id: 'festive-4', image: lehenga4, title: 'Festive Look 4', categoryTag: 'Festive' },
+      { id: 'festive-5', image: lehenga5, title: 'Festive Look 5', categoryTag: 'Festive' },
     ],
   },
 ];
 
 const CategorySection = ({ onCategoryClick = () => {} }) => {
   const navigate = useNavigate();
-  const [activeCategory, setActiveCategory] = useState('Casual');
+  const [activeCategory, setActiveCategory] = useState('All');
 
   const handleCategoryClick = (searchTerm) => {
     navigate(`/search/${encodeURIComponent(searchTerm)}`);
   };
 
-  const activeCategoryData = categories.find((cat) => cat.name === activeCategory) || categories[0];
+  const handleSeeMore = () => {
+    if (activeCategory === 'All') {
+      // Navigate to a general search or show all products
+      navigate('/search/all');
+    } else {
+      const activeCategoryData = categories.find((cat) => cat.name === activeCategory);
+      if (activeCategoryData) {
+        handleCategoryClick(activeCategoryData.searchTerm);
+      }
+    }
+  };
+
+  const activeCategoryData = categories.find((cat) => cat.name === activeCategory);
   const allItems = categories.flatMap((cat) => cat.items);
+  const displayItems = activeCategory === 'All' ? allItems : (activeCategoryData?.items || []);
 
   return (
     <section className="trending-shell" id="trending">
       <div className="section-head">
-        <h2>Shop by Category</h2>
+        <h2>Trending</h2>
         <p>Find the perfect style for every occasion.</p>
       </div>
       <LayoutGroup>
         <div className="filter-pills">
+          <motion.button
+            className={`pill filter ${activeCategory === 'All' ? 'active' : ''}`}
+            onClick={() => setActiveCategory('All')}
+            whileHover={{ y: -2 }}
+          >
+            All
+            {activeCategory === 'All' && (
+              <motion.span layoutId="pill" className="pill-highlight" />
+            )}
+          </motion.button>
           {categories.map((category) => (
             <motion.button
               key={category.name}
@@ -149,7 +172,7 @@ const CategorySection = ({ onCategoryClick = () => {} }) => {
         </div>
       </LayoutGroup>
       <div className="trending-grid">
-        {activeCategoryData.items.map((item, idx) => (
+        {displayItems.map((item, idx) => (
           <motion.article
             key={item.id}
             className="trend-card"
@@ -157,15 +180,48 @@ const CategorySection = ({ onCategoryClick = () => {} }) => {
             whileInView={{ opacity: 1, y: 0, scale: 1 }}
             viewport={{ once: true }}
             transition={{ delay: idx * 0.05, duration: 0.6 }}
-            onClick={() => handleCategoryClick(activeCategoryData.searchTerm)}
+            onClick={() => {
+              if (activeCategory === 'All') {
+                // Find which category this item belongs to
+                const itemCategory = categories.find(cat => 
+                  cat.items.some(catItem => catItem.id === item.id)
+                );
+                if (itemCategory) {
+                  handleCategoryClick(itemCategory.searchTerm);
+                }
+              } else if (activeCategoryData) {
+                handleCategoryClick(activeCategoryData.searchTerm);
+              }
+            }}
           >
             <img src={item.image} alt={item.title} />
             <div className="trend-info">
               <p>{item.title}</p>
-              <span>{activeCategoryData.tag}</span>
+              <span>{activeCategory === 'All' ? item.categoryTag || 'Trending' : activeCategoryData?.tag}</span>
             </div>
           </motion.article>
         ))}
+      </div>
+      <div style={{ textAlign: 'center', marginTop: '2rem' }}>
+        <motion.button
+          className="see-more-btn"
+          onClick={handleSeeMore}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          style={{
+            padding: '0.75rem 2rem',
+            borderRadius: '999px',
+            border: '1px solid var(--stroke)',
+            background: 'rgba(255, 255, 255, 0.05)',
+            color: 'var(--muted)',
+            cursor: 'pointer',
+            fontSize: '1rem',
+            fontWeight: 500,
+            transition: 'all 0.3s ease',
+          }}
+        >
+          See More
+        </motion.button>
       </div>
     </section>
   );

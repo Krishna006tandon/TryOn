@@ -49,6 +49,19 @@ const getBrandForProduct = (productName) => {
 export const getProductsBySearchTerm = (searchTerm) => {
   const term = searchTerm.toLowerCase().trim();
   
+  // Handle multiple search terms separated by comma
+  if (term.includes(',')) {
+    const terms = term.split(',').map(t => t.trim());
+    const allProducts = [];
+    
+    terms.forEach(t => {
+      const products = getProductsBySearchTerm(t);
+      allProducts.push(...products);
+    });
+    
+    return allProducts;
+  }
+  
   // Map search suggestions to actual product types
   const searchMap = {
     't shirt': 'tshirt',
@@ -62,14 +75,37 @@ export const getProductsBySearchTerm = (searchTerm) => {
     'dress': 'dress',
     'shirt': 'shirt',
     'sherwani': 'sherwani',
+    'shervani': 'sherwani', // Handle alternate spelling
     'anarkali': 'anarkali',
     'hoodie': 'hoodie',
     'top': 'top',
     'sweatshirt': 'sweatshirt',
     'denim': 'denim',
+    'kids': 'kids',
+    'kid': 'kids',
+    'party wear': 'dress',
+    'party': 'dress',
+    'formal': 'shirt',
+    'office wear': 'shirt',
+    'work': 'shirt',
   };
 
   const productType = searchMap[term];
+  
+  // Handle "all" search to return all products
+  if (term === 'all') {
+    return [
+      ...generateProducts('Hoodie', 5, 1200),
+      ...generateProducts('Tuxedo', 11, 3000),
+      ...generateProducts('Kurta', 7, 1500),
+      ...generateProducts('Dress', 5, 2000),
+      ...generateProducts('Shirt', 8, 1000),
+      ...generateProducts('Lehenga', 6, 4000),
+      ...generateProducts('Saree', 8, 2500),
+      ...generateProducts('T Shirt', 8, 800),
+    ];
+  }
+  
   if (!productType) return [];
 
   // Get image count from available images
@@ -88,6 +124,7 @@ export const getProductsBySearchTerm = (searchTerm) => {
     jeans: 6,
     sweatshirt: 9,
     denim: 8,
+    kids: 9,
   };
 
   const count = imageCounts[productType] || 5;
@@ -96,6 +133,8 @@ export const getProductsBySearchTerm = (searchTerm) => {
     baseName = 'T Shirt';
   } else if (productType === 'sweatshirt') {
     baseName = 'Sweatshirt';
+  } else if (productType === 'kids') {
+    baseName = 'Kids';
   } else {
     baseName = productType.charAt(0).toUpperCase() + productType.slice(1);
   }

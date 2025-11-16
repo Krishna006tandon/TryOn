@@ -27,6 +27,7 @@ import orderRoutes from './routes/orderRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
 import authRoutes from './routes/authRoutes.js';
 import userRoutes from './routes/userRoutes.js'; // Import userRoutes
+import userDetailsRoutes from './routes/userDetailsRoutes.js';
 
 const app = express();
 const port = process.env.PORT || 4000;
@@ -135,6 +136,7 @@ app.use('/api/orders', orderRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/user', userRoutes);
+app.use('/api/user-details', userDetailsRoutes);
 
 // Health check
 app.get('/api/health', (_req, res) => {

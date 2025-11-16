@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import AuthModal from './AuthModal';
+import api from '../utils/api';
 
 // Import all components that were previously in App.jsx's Routes
 import Navbar from './Navbar.jsx';
@@ -28,6 +29,7 @@ import Signup from '../pages/Signup.jsx';
 import OtpVerify from '../pages/OtpVerify.jsx';
 import UserLogin from '../pages/Login.jsx'; // Renamed to avoid conflict
 import Profile from '../pages/Profile.jsx'; // Import Profile component
+import UserOrders from '../pages/Orders.jsx'; // Import User Orders component
 
 import { fetchHeroSlides } from '../data/content.js';
 import '../i18n/config.js'; // Import i18n configuration
@@ -45,6 +47,36 @@ const AuthWrapper = () => {
     const [cartItems, setCartItems] = useState([]);
     const [isCartOpen, setIsCartOpen] = useState(false);
     const [quickViewProduct, setQuickViewProduct] = useState(null);
+
+    // Load cart from database when user logs in
+    const fetchCartFromDatabase = useCallback(async () => {
+        if (!user) return;
+        try {
+            const response = await api.get(`/user-details/${user.id}`);
+            if (response.data?.cart) {
+                // Convert cart items from database format to component format
+                const cartItemsFromDB = response.data.cart.map(item => ({
+                    id: item.productId,
+                    name: item.productName,
+                    price: item.price,
+                    image: item.productImage,
+                    primary: item.productImage,
+                    quantity: item.quantity || 1,
+                }));
+                setCartItems(cartItemsFromDB);
+            }
+        } catch (error) {
+            console.error('Error fetching cart from database:', error);
+        }
+    }, [user]);
+
+    useEffect(() => {
+        if (user) {
+            fetchCartFromDatabase();
+        } else {
+            setCartItems([]);
+        }
+    }, [user, fetchCartFromDatabase]);
 
     useEffect(() => {
         // Only show modal if not loading, no user, and on the home page
@@ -85,23 +117,83 @@ const AuthWrapper = () => {
         window.scrollTo({ top: 0, behavior: 'auto' });
     }, [location.pathname]);
 
-    const handleAddToCart = useCallback((product) => {
-        setCartItems((prev) => [...prev, product]);
+    const handleAddToCart = useCallback(async (product) => {
+        if (!user) {
+            navigate('/login');
+            return;
+        }
+
+        // Update local state immediately for better UX
+        setCartItems((prev) => {
+            // Check if product already exists in cart
+            const exists = prev.find(item => item.id === product.id);
+            if (exists) {
+                return prev; // Don't add duplicates
+            }
+            return [...prev, product];
+        });
         setIsCartOpen(true);
-    }, []);
+
+        // Save to database
+        try {
+            await api.post(`/user-details/${user.id}/cart`, {
+                productId: product.id,
+                productImage: product.image || product.primary,
+                productName: product.name || product.title,
+                price: product.price,
+                quantity: 1,
+            });
+        } catch (error) {
+            console.error('Error adding to cart:', error);
+            // Revert local state on error
+            setCartItems((prev) => prev.filter(item => item.id !== product.id));
+            alert('Failed to add item to cart. Please try again.');
+        }
+    }, [user, navigate]);
 
     const handleQuickView = useCallback((product) => {
         setQuickViewProduct(product);
-    }, []);
-
-    const handleRemoveFromCart = useCallback((id) => {
-        setCartItems((prev) => prev.filter((item, idx) => `${item.id}-${idx}` !== id));
     }, []);
 
     const cartItemsWithIds = useMemo(
         () => cartItems.map((item, idx) => ({ ...item, _instanceId: `${item.id}-${idx}` })),
         [cartItems],
     );
+
+    const handleRemoveFromCart = useCallback(async (id) => {
+        if (!user) return;
+        
+        // Extract productId from the id (format: "productId-index")
+        const productId = id.split('-').slice(0, -1).join('-');
+        
+        // Update local state immediately
+        setCartItems((prev) => prev.filter((item, idx) => `${item.id}-${idx}` !== id));
+
+        // Remove from database
+        try {
+            await api.delete(`/user-details/${user.id}/cart`, {
+                data: { productId },
+            });
+        } catch (error) {
+            console.error('Error removing from cart:', error);
+            // Reload cart from database on error
+            if (user) {
+                const response = await api.get(`/user-details/${user.id}`);
+                if (response.data?.cart) {
+                    const cartItemsFromDB = response.data.cart.map(item => ({
+                        id: item.productId,
+                        name: item.productName,
+                        price: item.price,
+                        image: item.productImage,
+                        primary: item.productImage,
+                        quantity: item.quantity || 1,
+                    }));
+                    setCartItems(cartItemsFromDB);
+                }
+            }
+            alert('Failed to remove item from cart. Please try again.');
+        }
+    }, [user]);
 
     const cartTotal = useMemo(() => {
         return cartItems.reduce((sum, item) => {
@@ -157,6 +249,30 @@ const AuthWrapper = () => {
                 <Route path="/verify-otp" element={<OtpVerify />} />
                 <Route path="/login" element={<UserLogin />} />
                 <Route path="/profile" element={<Profile />} />
+                <Route
+                    path="/orders"
+                    element={
+                        <>
+                            <AuraBackground />
+                            <Navbar
+                                onShopClick={() => navigate('/')}
+                                cartCount={cartItems.length}
+                                onCartClick={() => setIsCartOpen((prev) => !prev)}
+                            />
+                            <UserOrders />
+                            <Footer />
+                            <Chatbot userId={user?.id} />
+                            <ThemeToggle />
+                            <CartDrawer
+                                isOpen={isCartOpen}
+                                items={cartItemsWithIds}
+                                total={cartTotal}
+                                onClose={() => setIsCartOpen(false)}
+                                onRemoveItem={handleRemoveFromCart}
+                            />
+                        </>
+                    }
+                />
                 <Route
                     path="/search/:query"
                     element={

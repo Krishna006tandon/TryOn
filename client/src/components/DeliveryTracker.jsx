@@ -51,8 +51,9 @@ const DeliveryTracker = ({ orderId, trackingNumber }) => {
   }
 
   const statusSteps = [
-    { key: 'picked_up', label: 'Picked Up' },
-    { key: 'in_transit', label: 'In Transit' },
+    { key: 'ordered', label: 'Ordered' },
+    { key: 'packed', label: 'Packed' },
+    { key: 'shipped', label: 'Shipped' },
     { key: 'out_for_delivery', label: 'Out for Delivery' },
     { key: 'delivered', label: 'Delivered' },
   ];

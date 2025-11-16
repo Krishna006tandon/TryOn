@@ -57,5 +57,38 @@ router.get('/:id', async (req, res) => {
   }
 });
 
+// Update order status (for admin)
+router.put('/:id/status', async (req, res) => {
+  try {
+    const { status } = req.body;
+    const order = await Order.findById(req.params.id);
+
+    if (!order) {
+      return res.status(404).json({ error: 'Order not found' });
+    }
+
+    order.status = status;
+    await order.save();
+
+    // Update user details order status
+    const UserDetails = (await import('../models/UserDetails.js')).default;
+    const userDetails = await UserDetails.findOne({ userId: order.userId });
+    if (userDetails) {
+      const userOrder = userDetails.orders.find(
+        (o) => o.orderId && o.orderId.toString() === order._id.toString()
+      );
+      if (userOrder) {
+        userOrder.status = status;
+        await userDetails.save();
+      }
+    }
+
+    res.json(order);
+  } catch (error) {
+    console.error('Error updating order status:', error);
+    res.status(500).json({ error: 'Failed to update order status' });
+  }
+});
+
 export default router;
 

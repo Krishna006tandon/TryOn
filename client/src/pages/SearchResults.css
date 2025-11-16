@@ -3,6 +3,12 @@
   padding: 2rem 4vw;
   background: var(--bg-primary, #050507);
   color: #f9f9ff;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+html.light .search-results-page {
+  background: #ffffff;
+  color: #000000;
 }
 
 .search-results-container {
@@ -17,6 +23,11 @@
   margin-bottom: 1.5rem;
   font-size: 0.9rem;
   color: var(--muted, rgba(255, 255, 255, 0.6));
+  transition: color 0.3s ease;
+}
+
+html.light .breadcrumbs {
+  color: rgba(0, 0, 0, 0.6);
 }
 
 .breadcrumbs span:not(:last-child) {
@@ -40,6 +51,11 @@
   font-size: 1.5rem;
   font-weight: 600;
   margin: 0;
+  transition: color 0.3s ease;
+}
+
+html.light .results-header h1 {
+  color: #000000;
 }
 
 .sort-options {
@@ -52,6 +68,11 @@
 .sort-options span {
   color: var(--muted, rgba(255, 255, 255, 0.6));
   font-size: 0.9rem;
+  transition: color 0.3s ease;
+}
+
+html.light .sort-options span {
+  color: rgba(0, 0, 0, 0.6);
 }
 
 .sort-options button {
@@ -65,9 +86,19 @@
   transition: all 0.2s ease;
 }
 
+html.light .sort-options button {
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  color: rgba(0, 0, 0, 0.6);
+}
+
 .sort-options button:hover {
   border-color: rgba(255, 255, 255, 0.3);
   color: #fff;
+}
+
+html.light .sort-options button:hover {
+  border-color: rgba(0, 0, 0, 0.4);
+  color: #000;
 }
 
 .sort-options button.active {
@@ -89,14 +120,24 @@
   border-radius: 12px;
   overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.1);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease, border-color 0.3s ease;
   cursor: pointer;
+}
+
+html.light .product-card {
+  background: rgba(0, 0, 0, 0.02);
+  border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 .product-card:hover {
   transform: translateY(-4px);
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
   border-color: rgba(255, 255, 255, 0.2);
+}
+
+html.light .product-card:hover {
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  border-color: rgba(0, 0, 0, 0.2);
 }
 
 .product-image-wrapper {
@@ -198,6 +239,11 @@
   font-size: 0.9rem;
   margin: 0 0 0.25rem 0;
   color: #fff;
+  transition: color 0.3s ease;
+}
+
+html.light .product-brand {
+  color: #000;
 }
 
 .product-name {
@@ -207,6 +253,11 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  transition: color 0.3s ease;
+}
+
+html.light .product-name {
+  color: rgba(0, 0, 0, 0.8);
 }
 
 
@@ -222,12 +273,22 @@
   font-size: 1.1rem;
   font-weight: 600;
   color: #fff;
+  transition: color 0.3s ease;
+}
+
+html.light .current-price {
+  color: #000;
 }
 
 .original-price {
   font-size: 0.9rem;
   color: var(--muted, rgba(255, 255, 255, 0.5));
   text-decoration: line-through;
+  transition: color 0.3s ease;
+}
+
+html.light .original-price {
+  color: rgba(0, 0, 0, 0.5);
 }
 
 .discount-text {
@@ -255,6 +316,11 @@
   text-align: center;
   padding: 4rem 2rem;
   color: var(--muted, rgba(255, 255, 255, 0.6));
+  transition: color 0.3s ease;
+}
+
+html.light .no-results {
+  color: rgba(0, 0, 0, 0.6);
 }
 
 @media (max-width: 768px) {
