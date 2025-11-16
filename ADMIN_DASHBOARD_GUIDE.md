@@ -305,7 +305,7 @@ The `tailwind.config.js` and `postcss.config.js` files are already created.
 - ✅ Sales trend charts
 
 **API Endpoints:**
-- `GET /api/admin/dashboard/overview` - Get dashboard overview
+- `GET /api/admin/user/overview` - Get dashboard overview
 
 ---
 

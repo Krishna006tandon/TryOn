@@ -24,7 +24,7 @@ const Login = () => {
         // Store token and user data
         login(response.data.token, response.data.user);
         // Redirect to admin dashboard
-        navigate('/admin/dashboard');
+        navigate('/admin/user');
       } else {
         setError('Login failed. Please try again.');
       }

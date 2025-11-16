@@ -16,16 +16,6 @@ const LanguageSwitcher = () => {
     const newLang = currentLang === 'en' ? 'hi' : 'en';
     setCurrentLang(newLang);
   };
-
-  return (
-    <button
-      onClick={toggleLanguage}
-      className="px-3 py-1 text-sm border rounded hover:bg-gray-100 transition-colors"
-      aria-label="Toggle Language"
-    >
-      {currentLang === 'en' ? 'हिंदी' : 'English'}
-    </button>
-  );
 };
 
 // Translation hook for components

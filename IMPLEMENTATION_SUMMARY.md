@@ -86,7 +86,7 @@ npm run dev
 ### Access Admin Dashboard
 1. Navigate to `http://localhost:5173/admin/login`
 2. Login with any credentials (demo mode)
-3. Access dashboard at `http://localhost:5173/admin/dashboard`
+3. Access dashboard at `http://localhost:5173/admin/user`
 
 ## 📝 Key Files Created/Modified
 

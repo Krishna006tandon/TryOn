@@ -60,12 +60,12 @@ All endpoints are prefixed with `/api/admin` and require authentication:
 - **Analytics**: `/api/admin/analytics/sales`
 - **Coupons**: `/api/admin/coupons`
 - **Notifications**: `/api/admin/notifications`
-- **Dashboard**: `/api/admin/dashboard/overview`
+- **Dashboard**: `/api/admin/user/overview`
 - **Upload**: `/api/admin/upload/image`
 
 ### Frontend Routes
 - `/admin/login` - Login page
-- `/admin/dashboard` - Main dashboard
+- `/admin/user` - Main dashboard
 - `/admin/users` - User management (to be implemented)
 - `/admin/products` - Product management (to be implemented)
 - `/admin/categories` - Category management (to be implemented)

@@ -22,10 +22,7 @@ const menuItems = [
   { path: '/admin/users', label: 'Users', icon: Users },
   { path: '/admin/products', label: 'Products', icon: Package },
   { path: '/admin/categories', label: 'Categories', icon: FolderTree },
-  { path: '/admin/orders', label: 'Orders', icon: ShoppingCart },
-  { path: '/admin/analytics', label: 'Analytics', icon: BarChart3 },
-  { path: '/admin/coupons', label: 'Coupons', icon: Ticket },
-  { path: '/admin/notifications', label: 'Notifications', icon: Bell },
+  { path: '/admin/orders', label: 'Orders', icon: ShoppingCart }
 ];
 
 const Sidebar = ({ onLogout }) => {
