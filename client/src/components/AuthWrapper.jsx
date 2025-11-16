@@ -79,8 +79,16 @@ const AuthWrapper = () => {
     }, [user, fetchCartFromDatabase]);
 
     useEffect(() => {
-        // Only show modal if not loading, no user, and on the home page
-        if (!loading && !user && location.pathname === '/') {
+        // Don't show modal if:
+        // 1. Still loading
+        // 2. User is already logged in
+        // 3. Not on home page
+        // 4. On admin routes
+        // 5. On login/signup routes
+        const isAdminRoute = location.pathname.startsWith('/admin');
+        const isAuthRoute = location.pathname === '/login' || location.pathname === '/signup' || location.pathname === '/verify-otp';
+        
+        if (!loading && !user && location.pathname === '/' && !isAdminRoute && !isAuthRoute) {
             setShowAuthModal(true);
         } else {
             setShowAuthModal(false);

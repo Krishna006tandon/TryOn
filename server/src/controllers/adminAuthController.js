@@ -19,7 +19,15 @@ export const adminLogin = async (req, res) => {
     }
 
     // Check if user is admin
-    if (!user.isAdmin && user.email !== process.env.ADMIN_EMAIL) {
+    const isAdminEmail = user.email === (process.env.ADMIN_EMAIL || '').toLowerCase().trim();
+    if (!user.isAdmin && !isAdminEmail) {
+      console.log('Admin check failed:', {
+        isAdmin: user.isAdmin,
+        userEmail: user.email,
+        adminEmail: process.env.ADMIN_EMAIL,
+        isBlocked: user.isBlocked,
+        isActive: user.isActive
+      });
       return res.status(403).json({ message: 'Access denied. Admin privileges required.' });
     }
 
