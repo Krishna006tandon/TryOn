@@ -1,4 +1,5 @@
 import express from 'express';
+import mongoose from 'mongoose';
 import Order from '../models/Order.js';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -12,16 +13,26 @@ router.post('/', async (req, res) => {
       orderNumber: `ORD${Date.now()}${uuidv4().substring(0, 6).toUpperCase()}`,
     };
 
+    // Convert userId to ObjectId if it's a string
+    if (orderData.userId && typeof orderData.userId === 'string') {
+      orderData.userId = new mongoose.Types.ObjectId(orderData.userId);
+    }
+
     const order = new Order(orderData);
     await order.save();
 
-    // Populate product details
-    await order.populate('items.productId');
+    // Try to populate product details (only if productId is ObjectId)
+    try {
+      await order.populate('items.productId');
+    } catch (populateError) {
+      // Ignore populate errors if productId is not an ObjectId
+      console.log('Could not populate productId (may be string)');
+    }
 
     res.status(201).json(order);
   } catch (error) {
     console.error('Error creating order:', error);
-    res.status(500).json({ error: 'Failed to create order' });
+    res.status(500).json({ error: 'Failed to create order', details: error.message });
   }
 });
 
