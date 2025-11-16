@@ -8,7 +8,6 @@ import LanguageSwitcher from './LanguageSwitcher.jsx';
 import ProfileDropdown from './ProfileDropdown.jsx';
 import TryOnLogo from '../images/TryOn.png';
 
-import { useState } from 'react';
 import Drawer from './Drawer.jsx';
 import './Navbar.css';
 
@@ -112,25 +111,7 @@ const Navbar = ({ onShopClick = () => {}, cartCount = 0, onCartClick = () => {} 
     suggestion.toLowerCase().includes(searchValue.toLowerCase())
   );
 
-  return (
-    <header className="nav-shell">
-      {isSearchPage ? (
-        <button className="back-button" onClick={handleBackClick}>
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M19 12H5M12 19l-7-7 7-7" />
-          </svg>
-        </button>
-      ) : (
-        <button className="logo" onClick={onShopClick}>
-          <img 
-            src={TryOnLogo} 
-            alt="TryOn Logo" 
-            className="logo-image"
-          />
-          tryon collective
-        </button>
-      )}
-
+  
   const [drawerOpen, setDrawerOpen] = useState(false);
   const openDrawer = () => setDrawerOpen(true);
   const closeDrawer = () => setDrawerOpen(false);
