@@ -4,6 +4,8 @@ import { useAuth } from '../contexts/AuthContext'; // Import useAuth
 import VisualSearch from './VisualSearch.jsx';
 import VoiceSearch from './VoiceSearch.jsx';
 import LanguageSwitcher from './LanguageSwitcher.jsx';
+import { useState } from 'react';
+import Drawer from './Drawer.jsx';
 import './Navbar.css';
 
 const navLinks = [
@@ -24,8 +26,18 @@ const Navbar = ({ onShopClick = () => {}, cartCount = 0, onCartClick = () => {} 
     }
   };
 
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const openDrawer = () => setDrawerOpen(true);
+  const closeDrawer = () => setDrawerOpen(false);
+
   return (
     <header className="nav-shell">
+      <button className="hamburger" onClick={openDrawer} aria-label="Open menu">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M3 6h18M3 12h18M3 18h18" stroke="#fff" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      </button>
+
       <button className="logo" onClick={onShopClick}>
         tryon collective
       </button>
@@ -49,10 +61,16 @@ const Navbar = ({ onShopClick = () => {}, cartCount = 0, onCartClick = () => {} 
         <div className="search">
           <input placeholder="Search curated looks" />
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <div className="visual-search">
           <VisualSearch />
+        </div>
+        <div className="voice-search">
           <VoiceSearch />
+        </div>
+        <div className="language-switcher">
           <LanguageSwitcher />
+        </div>
+        <div className="nav-auth-buttons" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           {user ? ( // Conditionally render Profile link and Logout button
             <>
               <Link to="/profile" className="px-3 py-1 text-sm border rounded hover:bg-gray-100 transition-colors">
@@ -79,6 +97,24 @@ const Navbar = ({ onShopClick = () => {}, cartCount = 0, onCartClick = () => {} 
           </motion.span>
         </motion.button>
       </div>
+      <Drawer open={drawerOpen} onClose={closeDrawer}>
+        <nav style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+          {navLinks.map((link) => (
+            <a key={link.href} href={link.href} onClick={(e) => { e.preventDefault(); handleNavClick(e, link.href); closeDrawer(); }} style={{ color: '#fff', textDecoration: 'none' }}>{link.label}</a>
+          ))}
+        </nav>
+
+        <div style={{ marginTop: 20 }}>
+          {user ? (
+            <>
+              <Link to="/profile" onClick={closeDrawer} style={{ display: 'block', color: '#fff', marginBottom: 8 }}>Profile</Link>
+              <button onClick={() => { logout(); closeDrawer(); }} style={{ display: 'block', color: '#fff' }}>Logout</button>
+            </>
+          ) : (
+            <Link to="/login" onClick={closeDrawer} style={{ display: 'block', color: '#fff' }}>Login</Link>
+          )}
+        </div>
+      </Drawer>
     </header>
   );
 };
